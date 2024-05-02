@@ -1,6 +1,7 @@
 package com.udesc.dsd;
 
 import com.udesc.dsd.view.HomePageView;
+import com.udesc.dsd.view.MalhaView;
 
 import javax.swing.*;
 

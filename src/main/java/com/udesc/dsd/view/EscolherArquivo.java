@@ -7,9 +7,9 @@ import java.io.File;
 
 public class EscolherArquivo extends JFileChooser {
 
-    private MalhaController malhaController = new MalhaController();
+//    private MalhaController malhaController = new MalhaController();
 
-    public EscolherArquivo() {
+    public EscolherArquivo(MalhaController malhaController) {
         try {
             File diretorio = new File(System.getProperty("user.dir"));
 
