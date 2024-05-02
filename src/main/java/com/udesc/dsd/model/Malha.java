@@ -1,5 +1,7 @@
 package com.udesc.dsd.model;
 
+import java.io.File;
+
 public class Malha {
     public static final int NADA = 0;
     public static final int ESTRADA_CIMA = 1;
