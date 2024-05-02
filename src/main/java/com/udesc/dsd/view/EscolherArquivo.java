@@ -7,8 +7,6 @@ import java.io.File;
 
 public class EscolherArquivo extends JFileChooser {
 
-//    private MalhaController malhaController = new MalhaController();
-
     public EscolherArquivo(MalhaController malhaController) {
         try {
             File diretorio = new File(System.getProperty("user.dir"));
@@ -19,10 +17,10 @@ public class EscolherArquivo extends JFileChooser {
 
             if (retorno == JFileChooser.APPROVE_OPTION) {
                 File arquivoSelecionado = super.getSelectedFile();
-                malhaController.setNomeCaminho(arquivoSelecionado);
+                malhaController.setArquivo(arquivoSelecionado);
             }
-        } catch(Error err) {
-            System.out.println("Algo deu errado ao tentar importar o arquivo:" + err);
+        } catch(Error error) {
+            System.out.println("Algo deu errado ao tentar importar o arquivo:" + error);
         }
     }
 }
