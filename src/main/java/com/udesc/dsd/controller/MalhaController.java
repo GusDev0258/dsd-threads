@@ -13,7 +13,7 @@ public class MalhaController {
     public MalhaController() {
     }
 
-    public void setNomeCaminho(File arquivo) {
+    public void setArquivo(File arquivo) {
         this.arquivo = arquivo;
     }
 
