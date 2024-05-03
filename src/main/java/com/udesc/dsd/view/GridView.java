@@ -1,15 +1,15 @@
 package com.udesc.dsd.view;
 
-import com.udesc.dsd.model.Malha;
+import com.udesc.dsd.model.Grid;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class MalhaView extends JFrame {
+public class GridView extends JFrame {
     private final JPanel malhaPanel;
     private final int[][] malha;
 
-    public MalhaView(int[][] malha) {
+    public GridView(int[][] malha) {
         this.malha = malha;
         malhaPanel = new JPanel(new GridLayout(malha.length, malha[0].length));
         for(int i = 0; i < malha.length; i++) {
@@ -29,19 +29,19 @@ public class MalhaView extends JFrame {
 
     private Color getColorFromValue(int value) {
         switch (value) {
-            case Malha.ESTRADA_CIMA:
-            case Malha.ESTRADA_DIREITA:
-            case Malha.ESTRADA_BAIXO:
-            case Malha.ESTRADA_ESQUERDA:
+            case Grid.ESTRADA_CIMA:
+            case Grid.ESTRADA_DIREITA:
+            case Grid.ESTRADA_BAIXO:
+            case Grid.ESTRADA_ESQUERDA:
                 return Color.GRAY;
-            case Malha.CRUZAMENTO_CIMA:
-            case Malha.CRUZAMENTO_BAIXO:
-            case Malha.CRUZAMENTO_ESQUERDA:
-            case Malha.CRUZAMENTO_DIREITA:
-            case Malha.CRUZAMENTO_CIMA_DIREITA:
-            case Malha.CRUZAMENTO_CIMA_ESQUERDA:
-            case Malha.CRUZAMENTO_BAIXO_DIREITA:
-            case Malha.CRUZAMENTO_BAIXO_ESQUERDA:
+            case Grid.CRUZAMENTO_CIMA:
+            case Grid.CRUZAMENTO_BAIXO:
+            case Grid.CRUZAMENTO_ESQUERDA:
+            case Grid.CRUZAMENTO_DIREITA:
+            case Grid.CRUZAMENTO_CIMA_DIREITA:
+            case Grid.CRUZAMENTO_CIMA_ESQUERDA:
+            case Grid.CRUZAMENTO_BAIXO_DIREITA:
+            case Grid.CRUZAMENTO_BAIXO_ESQUERDA:
                 return Color.YELLOW;
             default:
                 return Color.WHITE;

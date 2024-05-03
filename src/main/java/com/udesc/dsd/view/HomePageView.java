@@ -39,7 +39,7 @@ public class HomePageView {
                     malhaController.loadMalha();
                     int[][] malha = malhaController.getMalha();
                     if (malha != null) {
-                        MalhaView malhaView = new MalhaView(malha);
+                        GridView malhaView = new GridView(malha);
                         malhaView.setVisible(true);
                     } else {
                         JOptionPane.showMessageDialog(frame, "Não foi possível carregar a malha", "Erro na malha",

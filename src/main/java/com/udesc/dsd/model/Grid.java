@@ -1,8 +1,6 @@
 package com.udesc.dsd.model;
 
-import java.io.File;
-
-public class Malha {
+public class Grid {
     public static final int NADA = 0;
     public static final int ESTRADA_CIMA = 1;
     public static final int ESTRADA_DIREITA = 2;
@@ -16,4 +14,7 @@ public class Malha {
     public static final int CRUZAMENTO_CIMA_ESQUERDA = 10;
     public static final int CRUZAMENTO_BAIXO_DIREITA = 11;
     public static final int CRUZAMENTO_BAIXO_ESQUERDA = 12;
+
+    private int rows, columns;
+    private Cell[][] cells;
 }
