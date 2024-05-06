@@ -1,13 +1,13 @@
 package com.udesc.dsd.view;
 
-import com.udesc.dsd.controller.MalhaController;
+import com.udesc.dsd.controller.GridController;
 
 import javax.swing.*;
 import java.io.File;
 
 public class EscolherArquivo extends JFileChooser {
 
-    public EscolherArquivo(MalhaController malhaController) {
+    public EscolherArquivo(GridController malhaController) {
         try {
             File diretorio = new File(System.getProperty("user.dir"));
 
@@ -17,7 +17,7 @@ public class EscolherArquivo extends JFileChooser {
 
             if (retorno == JFileChooser.APPROVE_OPTION) {
                 File arquivoSelecionado = super.getSelectedFile();
-                malhaController.setArquivo(arquivoSelecionado);
+                malhaController.setFile(arquivoSelecionado);
             }
         } catch(Error error) {
             System.out.println("Algo deu errado ao tentar importar o arquivo:" + error);

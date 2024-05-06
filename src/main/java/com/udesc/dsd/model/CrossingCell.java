@@ -5,8 +5,8 @@ import java.util.concurrent.Semaphore;
 public class CrossingCell extends Cell {
     private final Semaphore semaphore;
 
-    public CrossingCell(int x, int y) {
-        super(x, y);
+    public CrossingCell(int x, int y, int direction) {
+        super(x, y, direction);
         this.semaphore = new Semaphore(1);
     }
 
@@ -21,5 +21,9 @@ public class CrossingCell extends Cell {
 
     public void leave() {
         semaphore.release();
+    }
+
+    public Semaphore getSemaphore() {
+        return this.semaphore;
     }
 }

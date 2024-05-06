@@ -1,6 +1,6 @@
 package com.udesc.dsd.view;
 
-import com.udesc.dsd.controller.MalhaController;
+import com.udesc.dsd.controller.GridController;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -17,7 +17,7 @@ public class HomePageView {
     private JRadioButton radioButtonMonitor;
     private JLabel nomeArquivo;
 
-    private final MalhaController malhaController = new MalhaController();
+    private final GridController malhaController = new GridController();
     private File arquivo = null;
     private String msgErro;
 
@@ -34,7 +34,7 @@ public class HomePageView {
             public void actionPerformed(ActionEvent e) {
                 new EscolherArquivo(malhaController);
                 try {
-                    arquivo = malhaController.getArquivo();
+                    arquivo = malhaController.getFile();
                     nomeArquivo.setText("Arquivo selecionado: " + arquivo.getName());
                 } catch (FileNotFoundException ex) {
                     throw new RuntimeException(ex);
@@ -84,8 +84,8 @@ public class HomePageView {
                 /*----fim validacoes----*/
 
                 try {
-                    malhaController.loadMalha();
-                    int[][] malha = malhaController.getMalha();
+                    malhaController.loadGrid();
+                    int[][] malha = malhaController.getGrid();
                     if (malha != null) {
                         GridView malhaView = new GridView(malha);
                         malhaView.setVisible(true);

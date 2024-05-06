@@ -1,18 +1,24 @@
 package com.udesc.dsd.model;
 
-public class Vehicle implements Runnable{
-
+public class Vehicle extends Thread{
     private int x,y;
-    private Grid malha;
-    private int velocidade;
+    private int speed;
 
-    public Vehicle(int x, int y, Grid malha, int velocidade) {
+    private Cell currentCell;
+
+    public Vehicle(int x, int y, int speed) {
         this.x = x;
         this.y = y;
-        this.malha = malha;
-        this.velocidade = velocidade;
+        this.speed = speed;
     }
 
+    public Cell getCurrentCell() {
+       return this.currentCell;
+    }
+
+    public void setCurrentCell(Cell cell) {
+       this.currentCell = cell;
+    }
     @Override
     public void run() {
 

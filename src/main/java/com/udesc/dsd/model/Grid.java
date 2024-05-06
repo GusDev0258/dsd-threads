@@ -1,20 +1,66 @@
 package com.udesc.dsd.model;
 
-public class Grid {
-    public static final int NADA = 0;
-    public static final int ESTRADA_CIMA = 1;
-    public static final int ESTRADA_DIREITA = 2;
-    public static final int ESTRADA_BAIXO = 3;
-    public static final int ESTRADA_ESQUERDA = 4;
-    public static final int CRUZAMENTO_CIMA = 5;
-    public static final int CRUZAMENTO_DIREITA = 6;
-    public static final int CRUZAMENTO_BAIXO = 7;
-    public static final int CRUZAMENTO_ESQUERDA = 8;
-    public static final int CRUZAMENTO_CIMA_DIREITA = 9;
-    public static final int CRUZAMENTO_CIMA_ESQUERDA = 10;
-    public static final int CRUZAMENTO_BAIXO_DIREITA = 11;
-    public static final int CRUZAMENTO_BAIXO_ESQUERDA = 12;
+import java.util.ArrayList;
+import java.util.List;
 
-    private int rows, columns;
+public class Grid {
+
+    private static Grid instance = null;
+
+    private List<Cell> entrances = new ArrayList<>();
+    private List<Cell> exits = new ArrayList<>();
+
+    private int rowCount;
+    private int columCount;
+
     private Cell[][] cells;
+    private Grid(){
+    }
+
+    public static Grid getInstance() {
+        if(instance == null) {
+            instance = new Grid();
+        }
+        return instance;
+    }
+
+    public List<Cell> getEntrances() {
+        return entrances;
+    }
+
+    public void setEntrances(List<Cell> entrances) {
+        this.entrances = entrances;
+    }
+
+    public List<Cell> getExits() {
+        return exits;
+    }
+
+    public void setExits(List<Cell> exits) {
+        this.exits = exits;
+    }
+
+    public int getRowCount() {
+        return rowCount;
+    }
+
+    public void setRowCount(int rowCount) {
+        this.rowCount = rowCount;
+    }
+
+    public int getColumCount() {
+        return columCount;
+    }
+
+    public void setColumCount(int columCount) {
+        this.columCount = columCount;
+    }
+
+    public Cell[][] getCells() {
+        return cells;
+    }
+
+    public void setCells(Cell[][] cells) {
+        this.cells = cells;
+    }
 }
