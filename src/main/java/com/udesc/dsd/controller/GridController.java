@@ -44,11 +44,4 @@ public class GridController {
        grid.setGridMap(gridMap);
        scanner.close();
    }
-
-   public int[][] getGrid() {
-        if(this.grid != null) {
-            return this.gridMap;
-        }
-        return null;
-   }
 }

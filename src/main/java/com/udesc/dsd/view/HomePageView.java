@@ -1,6 +1,7 @@
 package com.udesc.dsd.view;
 
 import com.udesc.dsd.controller.GridController;
+import com.udesc.dsd.model.Grid;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -85,7 +86,7 @@ public class HomePageView {
 
                 try {
                     malhaController.loadGrid();
-                    int[][] malha = malhaController.getGrid();
+                    int[][] malha = Grid.getInstance().getGridMap();
                     if (malha != null) {
                         GridView malhaView = new GridView(malha);
                         malhaView.setVisible(true);

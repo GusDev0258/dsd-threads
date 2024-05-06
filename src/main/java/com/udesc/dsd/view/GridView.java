@@ -31,8 +31,11 @@ public class GridView extends JFrame {
     private Color getColorFromValue(int value) {
         switch (value) {
             case Direction.ESTRADA_CIMA:
+                return Color.BLUE;
             case Direction.ESTRADA_DIREITA:
+                return Color.RED;
             case Direction.ESTRADA_BAIXO:
+                return Color.GREEN;
             case Direction.ESTRADA_ESQUERDA:
                 return Color.GRAY;
             case Direction.CRUZAMENTO_CIMA:
