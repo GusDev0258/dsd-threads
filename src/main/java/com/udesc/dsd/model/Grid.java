@@ -14,6 +14,7 @@ public class Grid {
     private int columCount;
 
     private Cell[][] cells;
+    private int[][] gridMap;
     private Grid(){
     }
 
@@ -62,5 +63,13 @@ public class Grid {
 
     public void setCells(Cell[][] cells) {
         this.cells = cells;
+    }
+
+    public int[][] getGridMap() {
+        return gridMap;
+    }
+
+    public void setGridMap(int[][] gridMap) {
+        this.gridMap = gridMap;
     }
 }

@@ -10,8 +10,7 @@ public class GridController {
 
     private File file = null;
 
-    private Grid grid;
-    private int[][] gridMap;
+    private Grid grid = Grid.getInstance();
 
     public GridController() {
     }
@@ -31,8 +30,9 @@ public class GridController {
        Scanner scanner = new Scanner(this.file);
        int linhas = scanner.nextInt();
        int colunas = scanner.nextInt();
-
-       gridMap = new int[linhas][colunas];
+       grid.setRowCount(linhas);
+       grid.setColumCount(colunas);
+       var gridMap = new int[linhas][colunas];
 
        for (int i = 0; i < linhas; i++) {
            for (int j = 0; j < colunas; j++) {
@@ -41,6 +41,7 @@ public class GridController {
                }
            }
        }
+       grid.setGridMap(gridMap);
        scanner.close();
    }
 
