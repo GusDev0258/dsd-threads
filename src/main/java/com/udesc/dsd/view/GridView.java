@@ -1,5 +1,6 @@
 package com.udesc.dsd.view;
 
+import com.udesc.dsd.model.Direction;
 import com.udesc.dsd.model.Grid;
 
 import javax.swing.*;
@@ -29,19 +30,19 @@ public class GridView extends JFrame {
 
     private Color getColorFromValue(int value) {
         switch (value) {
-            case Grid.ESTRADA_CIMA:
-            case Grid.ESTRADA_DIREITA:
-            case Grid.ESTRADA_BAIXO:
-            case Grid.ESTRADA_ESQUERDA:
+            case Direction.ESTRADA_CIMA:
+            case Direction.ESTRADA_DIREITA:
+            case Direction.ESTRADA_BAIXO:
+            case Direction.ESTRADA_ESQUERDA:
                 return Color.GRAY;
-            case Grid.CRUZAMENTO_CIMA:
-            case Grid.CRUZAMENTO_BAIXO:
-            case Grid.CRUZAMENTO_ESQUERDA:
-            case Grid.CRUZAMENTO_DIREITA:
-            case Grid.CRUZAMENTO_CIMA_DIREITA:
-            case Grid.CRUZAMENTO_CIMA_ESQUERDA:
-            case Grid.CRUZAMENTO_BAIXO_DIREITA:
-            case Grid.CRUZAMENTO_BAIXO_ESQUERDA:
+            case Direction.CRUZAMENTO_CIMA:
+            case Direction.CRUZAMENTO_BAIXO:
+            case Direction.CRUZAMENTO_ESQUERDA:
+            case Direction.CRUZAMENTO_DIREITA:
+            case Direction.CRUZAMENTO_CIMA_DIREITA:
+            case Direction.CRUZAMENTO_CIMA_ESQUERDA:
+            case Direction.CRUZAMENTO_BAIXO_DIREITA:
+            case Direction.CRUZAMENTO_BAIXO_ESQUERDA:
                 return Color.YELLOW;
             default:
                 return Color.WHITE;
