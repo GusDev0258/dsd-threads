@@ -6,20 +6,20 @@ import java.util.List;
 public class Grid {
 
     private static Grid instance = null;
-
     private List<Cell> entrances = new ArrayList<>();
     private List<Cell> exits = new ArrayList<>();
+    private List<Cell> cells = new ArrayList<>();
 
     private int rowCount;
     private int columCount;
 
-    private Cell[][] cells;
     private int[][] gridMap;
-    private Grid(){
+
+    private Grid() {
     }
 
     public static Grid getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new Grid();
         }
         return instance;
@@ -29,16 +29,25 @@ public class Grid {
         return entrances;
     }
 
-    public void setEntrances(List<Cell> entrances) {
-        this.entrances = entrances;
-    }
-
     public List<Cell> getExits() {
         return exits;
     }
 
-    public void setExits(List<Cell> exits) {
-        this.exits = exits;
+    public List<Cell> getCells() {
+        return cells;
+    }
+    public void addCell(Cell cell) {
+        this.cells.add(cell);
+    }
+    public void addEntrance(Cell cell) {
+        if (cell.isEntrance()) {
+            this.entrances.add(cell);
+        }
+    }
+    public void addExit(Cell cell) {
+        if (cell.isExit()) {
+            this.exits.add(cell);
+        }
     }
 
     public int getRowCount() {
@@ -57,13 +66,6 @@ public class Grid {
         this.columCount = columCount;
     }
 
-    public Cell[][] getCells() {
-        return cells;
-    }
-
-    public void setCells(Cell[][] cells) {
-        this.cells = cells;
-    }
 
     public int[][] getGridMap() {
         return gridMap;

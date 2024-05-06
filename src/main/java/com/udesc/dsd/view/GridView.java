@@ -2,22 +2,35 @@ package com.udesc.dsd.view;
 
 import com.udesc.dsd.model.Direction;
 import com.udesc.dsd.model.Grid;
+import com.udesc.dsd.model.factory.CellFactory;
+import com.udesc.dsd.model.strategy.EntranceStrategy;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class GridView extends JFrame {
     private final JPanel malhaPanel;
-    private final int[][] malha;
 
-    public GridView(int[][] malha) {
-        this.malha = malha;
-        malhaPanel = new JPanel(new GridLayout(malha.length, malha[0].length));
-        for(int i = 0; i < malha.length; i++) {
-            for (int j = 0; j < malha[i].length; j++) {
-                JPanel celula = new JPanel();
+    private final Grid grid = Grid.getInstance();
+    public GridView() {
+        malhaPanel = new JPanel(new GridLayout(grid.getRowCount(), grid.getColumCount()));
+        for(int i = 0; i < grid.getGridMap().length; i++) {
+            for (int j = 0; j < grid.getGridMap()[i].length; j++) {
+                var currentDirection = grid.getGridMap()[i][j];
+                var cell = CellFactory.createCell(i, j, currentDirection);
+                var isCellEntrance = EntranceStrategy.execute(i, j, currentDirection, grid.getRowCount(),
+                        grid.getColumCount());
+                if(isCellEntrance == EntranceStrategy.ENTRANCE) {
+                    cell.setEntrance(true);
+                    grid.addEntrance(cell);
+                }else if(isCellEntrance == EntranceStrategy.EXIT) {
+                    cell.setExit(true);
+                    grid.addExit(cell);
+                }
+                grid.addCell(cell);
+                JPanel celula = new CellPanel(cell);
                 celula.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                celula.setBackground(getColorFromValue(malha[i][j]));
+                celula.setBackground(getColorFromValue(currentDirection));
                 malhaPanel.add(celula);
             }
         }

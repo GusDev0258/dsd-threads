@@ -2,10 +2,10 @@ package com.udesc.dsd.model;
 
 import java.util.concurrent.Semaphore;
 
-public class CrossingCell extends Cell {
+public class RoadCell extends Cell {
     private final Semaphore semaphore;
 
-    public CrossingCell(int x, int y, int direction) {
+    public RoadCell(int x, int y, int direction) {
         super(x, y, direction);
         this.semaphore = new Semaphore(1);
     }
