@@ -47,46 +47,45 @@ public class Grid {
 
     public void initializeCells() {
         if (gridMap.length != 0) {
-            for (int x = 0; x < getRowCount(); x++) {
-                for (int y = 0; y < getColumCount(); y++) {
+            for (int y = 0; y < getRowCount(); y++) {
+                for (int x = 0; x < getColumCount(); x++) {
                     var currentDirection = gridMap[y][x];
-                        var cell = CellFactory.createCell(x, y, currentDirection);
-                        this.checkAndMakeCellIsEntranceOrExit(cell, y, x);
-                        cells.put(new Point(x, y), cell);
+                    var cell = CellFactory.createCell(x, y, currentDirection);
+                    this.checkAndMakeCellIsEntranceOrExit(cell, y, x);
+                    cells.put(new Point(x, y), cell);
                 }
             }
             initializeCellNeighbours();
         }
     }
 
+
+
     public void initializeCellNeighbours() {
         if (!cells.isEmpty() && gridMap.length != 0) {
             for (Point point : cells.keySet()) {
-                int x = point.getPositionX();  // Column index
-                int y = point.getPositionY();  // Row index
+                int x = point.getPositionX();
+                int y = point.getPositionY();
 
-                // Check top neighbor (decrement y)
                 if (y > 0 && gridMap[y - 1][x] != Direction.NADA) {
                     cells.get(point).addNeighbor(cells.get(new Point(x, y - 1)));
                 }
-                // Check bottom neighbor (increment y)
                 if (y < gridMap.length - 1 && gridMap[y + 1][x] != Direction.NADA) {
                     cells.get(point).addNeighbor(cells.get(new Point(x, y + 1)));
                 }
-                // Check left neighbor (decrement x)
                 if (x > 0 && gridMap[y][x - 1] != Direction.NADA) {
                     cells.get(point).addNeighbor(cells.get(new Point(x - 1, y)));
                 }
-                // Check right neighbor (increment x)
                 if (x < gridMap[y].length - 1 && gridMap[y][x + 1] != Direction.NADA) {
                     cells.get(point).addNeighbor(cells.get(new Point(x + 1, y)));
                 }
             }
         }
     }
-    private void checkAndMakeCellIsEntranceOrExit(Cell cell, int i, int j) {
-        var isCellEntrance = EntranceStrategy.execute(i, j, cell.getDirection(), getRowCount(),
-                getColumCount());
+
+
+    private void checkAndMakeCellIsEntranceOrExit(Cell cell, int y, int x) {
+        var isCellEntrance = EntranceStrategy.execute(x, y, cell.getDirection(), getRowCount(), getColumCount());
         if (isCellEntrance == EntranceStrategy.ENTRANCE) {
             cell.setEntrance(true);
             addEntrance(cell);
@@ -95,6 +94,7 @@ public class Grid {
             addExit(cell);
         }
     }
+
 
     public Cell getGridCellAt(int x, int y) {
         if (cells.size() > 0) {

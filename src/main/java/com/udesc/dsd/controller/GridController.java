@@ -28,13 +28,13 @@ public class GridController implements Observer {
     }
     public void loadGrid() throws FileNotFoundException {
         Scanner scanner = new Scanner(this.file);
-        int colunas = scanner.nextInt();
-        int linhas = scanner.nextInt();
-        grid.setColumCount(colunas);
-        grid.setRowCount(linhas);
-        var gridMap = new int[colunas][linhas];
-        for (int y = 0; y < colunas; y++) {
-            for (int x = 0; x < linhas; x++) {
+        int columns = scanner.nextInt(); // Reading number of columns
+        int rows = scanner.nextInt();    // Reading number of rows
+        grid.setColumCount(columns);
+        grid.setRowCount(rows);
+        var gridMap = new int[rows][columns]; // correct dimension order
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < columns; x++) {
                 if (scanner.hasNextInt()) {
                     gridMap[y][x] = scanner.nextInt();
                 }
