@@ -1,5 +1,9 @@
 package com.udesc.dsd.model;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public abstract class Cell {
     private int positionX;
     private int positionY;
@@ -16,12 +20,28 @@ public abstract class Cell {
     private boolean isCrossing = false;
     private String vehicleImagePath;
 
+    private Cell upCell;
+    private Cell bottomCell;
+    private Cell leftCell;
+    private Cell rightCell;
+
+    private Map<Point, Cell> neighbours = new HashMap<>();
     public Cell(int x, int y, int direction) {
         this.positionX = x;
         this.positionY = y;
         this.direction = direction;
     }
 
+    public void addNeighbour(Cell neighbour) {
+        Point point = new Point(neighbour.getPositionX(), neighbour.getPositionY());
+        neighbours.put(point, neighbour);
+    }
+    public Map<Point,Cell> getNeighbours() {
+        return neighbours;
+    }
+    public List<Cell> getNeighboursCells() {
+       return neighbours.values().stream().toList();
+    }
     public abstract boolean isOccupied();
 
     public int getPositionX() {
@@ -85,6 +105,38 @@ public abstract class Cell {
             this.isCrossing = true;
         }
         return this.isCrossing;
+    }
+
+    public Cell getUpCell() {
+        return upCell;
+    }
+
+    public void setUpCell(Cell upCell) {
+        this.upCell = upCell;
+    }
+
+    public Cell getBottomCell() {
+        return bottomCell;
+    }
+
+    public void setBottomCell(Cell bottomCell) {
+        this.bottomCell = bottomCell;
+    }
+
+    public Cell getLeftCell() {
+        return leftCell;
+    }
+
+    public void setLeftCell(Cell leftCell) {
+        this.leftCell = leftCell;
+    }
+
+    public Cell getRightCell() {
+        return rightCell;
+    }
+
+    public void setRightCell(Cell rightCell) {
+        this.rightCell = rightCell;
     }
 
     abstract public boolean tryEnter();

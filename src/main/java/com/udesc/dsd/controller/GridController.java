@@ -42,6 +42,7 @@ public class GridController {
            }
        }
        grid.setGridMap(gridMap);
+       grid.initializeCells();
        scanner.close();
    }
 }

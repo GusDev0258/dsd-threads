@@ -18,17 +18,6 @@ public class GridView extends JFrame {
             for (int j = 0; j < grid.getGridMap()[i].length; j++) {
                 var currentDirection = grid.getGridMap()[i][j];
                 var cell = CellFactory.createCell(i, j, currentDirection);
-                var isCellEntrance = EntranceStrategy.execute(i, j, currentDirection, grid.getRowCount(),
-                        grid.getColumCount());
-                if(isCellEntrance == EntranceStrategy.ENTRANCE) {
-                    cell.setEntrance(true);
-                    grid.addEntrance(cell);
-                }else if(isCellEntrance == EntranceStrategy.EXIT) {
-                    cell.setExit(true);
-                    grid.addExit(cell);
-                }
-
-                grid.addCell(cell);
                 JPanel celula = new CellPanel(cell);
                 celula.setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 celula.setBackground(getColorFromValue(currentDirection));

@@ -32,21 +32,7 @@ public class Vehicle extends Thread{
     public void run() {
 
     }
-
-
-
-    public void move() throws InterruptedException {
-        try {
-           var enter =  this.currentCell.tryEnter();
-            sleep(1000);
-            if(enter) {
-               this.setCurrentCell(this.currentCell.getNextCell());
-               move();
-            }
-        } catch( InterruptedException exception) {
-            throw new InterruptedException(exception.getMessage());
-        }
-
+    public void move() {
 
     }
 }
