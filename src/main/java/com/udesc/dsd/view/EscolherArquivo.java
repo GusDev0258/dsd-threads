@@ -7,7 +7,7 @@ import java.io.File;
 
 public class EscolherArquivo extends JFileChooser {
 
-    public EscolherArquivo(GridController malhaController) {
+    public EscolherArquivo(GridController gridController) {
         try {
             File diretorio = new File(System.getProperty("user.dir"));
 
@@ -17,7 +17,7 @@ public class EscolherArquivo extends JFileChooser {
 
             if (retorno == JFileChooser.APPROVE_OPTION) {
                 File arquivoSelecionado = super.getSelectedFile();
-                malhaController.setFile(arquivoSelecionado);
+                gridController.setFile(arquivoSelecionado);
             }
         } catch(Error error) {
             System.out.println("Algo deu errado ao tentar importar o arquivo:" + error);

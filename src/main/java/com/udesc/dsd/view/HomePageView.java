@@ -2,6 +2,7 @@ package com.udesc.dsd.view;
 
 import com.udesc.dsd.controller.GridController;
 import com.udesc.dsd.model.Grid;
+import com.udesc.dsd.model.SimulationSettings;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -18,9 +19,11 @@ public class HomePageView {
     private JRadioButton radioButtonMonitor;
     private JLabel nomeArquivo;
 
-    private final GridController malhaController = new GridController();
+    private final GridController gridController = new GridController();
     private File arquivo = null;
     private String msgErro;
+
+    private SimulationSettings settings = SimulationSettings.getInstance();
 
     public HomePageView() {
         JFrame frame = new JFrame("dsd-threads");
@@ -33,9 +36,9 @@ public class HomePageView {
         buttonSelecionarMalha.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new EscolherArquivo(malhaController);
+                new EscolherArquivo(gridController);
                 try {
-                    arquivo = malhaController.getFile();
+                    arquivo = gridController.getFile();
                     nomeArquivo.setText("Arquivo selecionado: " + arquivo.getName());
                 } catch (FileNotFoundException ex) {
                     throw new RuntimeException(ex);
@@ -61,6 +64,7 @@ public class HomePageView {
                         if (valor <= 0) {
                             throw new NumberFormatException();
                         }
+                        settings.setSimulationCarQuantity(valor);
                     } catch (NumberFormatException ex) {
                         msgErro += "Por favor, insira um número inteiro maior que zero no campo número de carros.\n";
                     }
@@ -69,6 +73,11 @@ public class HomePageView {
                 // verifica se pelo menos um dos JRadioButtons está selecionado
                 if (!radioButtonSemaforo.isSelected() && !radioButtonMonitor.isSelected()) {
                     msgErro += "Por favor, selecione pelo menos uma opção (Semáforo ou Monitor).\n";
+                }
+                if(radioButtonSemaforo.isSelected()) {
+                    settings.setSimulationMode(settings.getSimulationModeSemaphore());
+                } else {
+                    settings.setSimulationMode(settings.getSimulationModeMonitor());
                 }
 
                 // verifica se um arquivo foi selecionado
@@ -85,9 +94,8 @@ public class HomePageView {
                 /*----fim validacoes----*/
 
                 try {
-                    malhaController.loadGrid();
-                    int[][] malha = Grid.getInstance().getGridMap();
-                    if (malha != null) {
+                    gridController.loadGrid();
+                    if (Grid.getInstance().getGridMap() != null) {
                         GridView malhaView = new GridView();
                         malhaView.setVisible(true);
                     } else {

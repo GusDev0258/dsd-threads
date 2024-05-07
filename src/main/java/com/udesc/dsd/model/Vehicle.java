@@ -24,15 +24,47 @@ public class Vehicle extends Thread{
     }
 
     public boolean removeCarFromGrid() {
-        this.currentCell.releaseVehicle();
-        this.currentCell.setVehicle(null);
+        if(this.currentCell != null) {
+            this.currentCell.releaseVehicle();
+            this.currentCell.setVehicle(null);
+        }
         this.isOutOfGrid = true;
+        return true;
     }
     @Override
     public void run() {
-
+        while(!isOutOfGrid) {
+            try {
+                move();
+                Thread.sleep(1000 / speed);
+            } catch(InterruptedException exception) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
     public void move() {
+        if (currentCell == null || currentCell.getNeighbours().isEmpty()) {
+            return;
+        }
 
+        Cell nextCell = chooseNextCell();
+
+        if (nextCell != null && nextCell.tryEnter()) {
+            Cell previousCell = this.currentCell;
+            setCurrentCell(nextCell);
+            if (previousCell != null) {
+                previousCell.releaseVehicle();
+            }
+            this.x = nextCell.getPositionX();
+            this.y = nextCell.getPositionY();
+        }
+    }
+    private Cell chooseNextCell() {
+        for(Cell neighbor: currentCell.getNeighboursCells()) {
+            if(!neighbor.isOccupied()){
+                return neighbor;
+            }
+        }
+        return null;
     }
 }
