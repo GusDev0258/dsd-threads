@@ -1,22 +1,22 @@
 package com.udesc.dsd.view;
 
+import com.udesc.dsd.controller.GridController;
 import com.udesc.dsd.model.Direction;
-import com.udesc.dsd.model.Grid;
 import com.udesc.dsd.model.factory.CellFactory;
-import com.udesc.dsd.model.strategy.EntranceStrategy;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class GridView extends JFrame {
     private final JPanel malhaPanel;
-
-    private final Grid grid = Grid.getInstance();
-    public GridView() {
-        malhaPanel = new JPanel(new GridLayout(grid.getRowCount(), grid.getColumCount()));
-        for(int i = 0; i < grid.getGridMap().length; i++) {
-            for (int j = 0; j < grid.getGridMap()[i].length; j++) {
-                var currentDirection = grid.getGridMap()[i][j];
+    private GridController gridController;
+    public GridView(GridController gridController) {
+        this.gridController = gridController;
+        malhaPanel =
+                new JPanel(new GridLayout(gridController.getGrid().getRowCount(), gridController.getGrid().getColumCount()));
+        for (int i = 0; i < gridController.getGrid().getGridMap().length; i++) {
+            for (int j = 0; j < gridController.getGrid().getGridMap()[i].length; j++) {
+                var currentDirection = gridController.getGrid().getGridMap()[i][j];
                 var cell = CellFactory.createCell(i, j, currentDirection);
                 JPanel celula = new CellPanel(cell);
                 celula.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -25,12 +25,12 @@ public class GridView extends JFrame {
             }
         }
         add(malhaPanel);
-        setTitle("Malha");
-        setSize(800,600);
+        setTitle("Simulação de Tráfego");
+        setSize(1280, 720);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        gridController.startSimulation();
     }
-
     private Color getColorFromValue(int value) {
         switch (value) {
             case Direction.ESTRADA_CIMA:

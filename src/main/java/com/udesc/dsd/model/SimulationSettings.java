@@ -6,6 +6,8 @@ public class SimulationSettings {
     private final static int SIMULATION_MODE_MONITOR = 1;
     private int carQuantity  = 0;
 
+    private boolean simulationRunning = false;
+
     private int mode = SIMULATION_MODE_SEMAPHORE;
     private SimulationSettings(){}
 
@@ -36,5 +38,17 @@ public class SimulationSettings {
     }
     public int getSimulationModeMonitor() {
         return SIMULATION_MODE_MONITOR;
+    }
+
+    public void stopSimulation(){
+        this.simulationRunning = false;
+    }
+
+    public void startSimulation() {
+        this.simulationRunning = true;
+    }
+
+    public boolean isSimulationRunning() {
+        return this.simulationRunning;
     }
 }

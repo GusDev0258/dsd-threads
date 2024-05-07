@@ -1,6 +1,7 @@
 package com.udesc.dsd.model;
 
 import com.udesc.dsd.model.factory.CellFactory;
+import com.udesc.dsd.model.observer.Observer;
 import com.udesc.dsd.model.strategy.EntranceStrategy;
 
 import java.util.ArrayList;
@@ -9,16 +10,14 @@ import java.util.List;
 import java.util.Map;
 
 public class Grid {
-
     private static Grid instance = null;
     private List<Cell> entrances = new ArrayList<>();
     private List<Cell> exits = new ArrayList<>();
     private Map<Point, Cell> cells = new HashMap<>();
-
     private int rowCount;
     private int columCount;
-
     private int[][] gridMap;
+    private List<Observer> observers = new ArrayList<>();
 
     private Grid() {
     }
@@ -30,43 +29,61 @@ public class Grid {
         return instance;
     }
 
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    public void notifyVehicleEnter(Vehicle vehicle) {
+        for (Observer obs : observers) {
+            obs.onVehicleEnter(vehicle);
+        }
+    }
+
+    public void notifyVehicleLeave(Vehicle vehicle) {
+        for (Observer obs : observers) {
+            obs.onVehicleLeave(vehicle);
+        }
+    }
+
     public void initializeCells() {
         if (gridMap.length != 0) {
-            for (int i = 0; i < getRowCount(); i++) {
-                for (int j = 0; i < getColumCount(); j++) {
-                    var currentDirection = gridMap[i][j];
-                    if (currentDirection != Direction.NADA) {
-                        var cell = CellFactory.createCell(i, j, currentDirection);
-                        this.checkAndMakeCellIsEntranceOrExit(cell, i, j);
-                        cells.put(new Point(i, j), cell);
-
-                    }
+            for (int x = 0; x < getRowCount(); x++) {
+                for (int y = 0; y < getColumCount(); y++) {
+                    var currentDirection = gridMap[y][x];
+                        var cell = CellFactory.createCell(x, y, currentDirection);
+                        this.checkAndMakeCellIsEntranceOrExit(cell, y, x);
+                        cells.put(new Point(x, y), cell);
                 }
             }
+            initializeCellNeighbours();
         }
     }
 
     public void initializeCellNeighbours() {
-        if (cells.size() != 0 && gridMap.length != 0) {
+        if (!cells.isEmpty() && gridMap.length != 0) {
             for (Point point : cells.keySet()) {
-                int x = point.getPositionX();
-                int y = point.getPositionY();
+                int x = point.getPositionX();  // Column index
+                int y = point.getPositionY();  // Row index
+
+                // Check top neighbor (decrement y)
                 if (y > 0 && gridMap[y - 1][x] != Direction.NADA) {
-                    cells.get(point).addNeighbour(cells.get(new Point(x + 1, y)));
+                    cells.get(point).addNeighbor(cells.get(new Point(x, y - 1)));
                 }
-                if (x < gridMap[y].length - 1 && gridMap[y][x + 1] != Direction.NADA) {
-                    cells.get(point).addNeighbour(cells.get(new Point(x + 1, y)));
-                }
+                // Check bottom neighbor (increment y)
                 if (y < gridMap.length - 1 && gridMap[y + 1][x] != Direction.NADA) {
-                    cells.get(point).addNeighbour(cells.get(new Point(x, y + 1)));
+                    cells.get(point).addNeighbor(cells.get(new Point(x, y + 1)));
                 }
+                // Check left neighbor (decrement x)
                 if (x > 0 && gridMap[y][x - 1] != Direction.NADA) {
-                    cells.get(point).addNeighbour(cells.get(new Point(x - 1, y)));
+                    cells.get(point).addNeighbor(cells.get(new Point(x - 1, y)));
+                }
+                // Check right neighbor (increment x)
+                if (x < gridMap[y].length - 1 && gridMap[y][x + 1] != Direction.NADA) {
+                    cells.get(point).addNeighbor(cells.get(new Point(x + 1, y)));
                 }
             }
         }
     }
-
     private void checkAndMakeCellIsEntranceOrExit(Cell cell, int i, int j) {
         var isCellEntrance = EntranceStrategy.execute(i, j, cell.getDirection(), getRowCount(),
                 getColumCount());
@@ -134,7 +151,6 @@ public class Grid {
         this.columCount = columCount;
     }
 
-
     public int[][] getGridMap() {
         return gridMap;
     }
@@ -142,5 +158,4 @@ public class Grid {
     public void setGridMap(int[][] gridMap) {
         this.gridMap = gridMap;
     }
-
 }

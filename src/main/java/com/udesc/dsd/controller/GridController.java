@@ -1,48 +1,85 @@
 package com.udesc.dsd.controller;
 
-import com.udesc.dsd.model.Grid;
+import com.udesc.dsd.model.*;
+import com.udesc.dsd.model.factory.VehicleFactory;
+import com.udesc.dsd.model.observer.Observer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class GridController {
-
+public class GridController implements Observer {
     private File file = null;
-
     private Grid grid = Grid.getInstance();
-
+    private SimulationSettings settings = SimulationSettings.getInstance();
+    private Map<Long, Vehicle> cars = new HashMap<>();
     public GridController() {
     }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-
     public File getFile() throws FileNotFoundException {
         if (!this.file.exists()) {
             throw new FileNotFoundException("Arquivo não definido");
         }
         return this.file;
     }
-
-   public void loadGrid() throws FileNotFoundException{
-       Scanner scanner = new Scanner(this.file);
-       int linhas = scanner.nextInt();
-       int colunas = scanner.nextInt();
-       grid.setRowCount(linhas);
-       grid.setColumCount(colunas);
-       var gridMap = new int[linhas][colunas];
-
-       for (int i = 0; i < linhas; i++) {
-           for (int j = 0; j < colunas; j++) {
-               if(scanner.hasNextInt()) {
-                   gridMap[i][j] = scanner.nextInt();
-               }
-           }
-       }
-       grid.setGridMap(gridMap);
-       grid.initializeCells();
-       scanner.close();
-   }
+    public void setFile(File file) throws FileNotFoundException {
+            this.file = file;
+            this.loadGrid();
+    }
+    public void loadGrid() throws FileNotFoundException {
+        Scanner scanner = new Scanner(this.file);
+        int colunas = scanner.nextInt();
+        int linhas = scanner.nextInt();
+        grid.setColumCount(colunas);
+        grid.setRowCount(linhas);
+        var gridMap = new int[colunas][linhas];
+        for (int y = 0; y < colunas; y++) {
+            for (int x = 0; x < linhas; x++) {
+                if (scanner.hasNextInt()) {
+                    gridMap[y][x] = scanner.nextInt();
+                }
+            }
+        }
+        grid.setGridMap(gridMap);
+        scanner.close();
+        grid.initializeCells();
+    }
+    public Grid getGrid() {
+        return this.grid;
+    }
+    public void startSimulation() {
+        grid.addObserver(this);
+        populateCarsIntoTheGrid();
+    }
+    public void populateCarsIntoTheGrid() {
+        AtomicInteger numActiveCars = new AtomicInteger(0);
+        while (numActiveCars.get() < settings.getCarQuantity() && settings.isSimulationRunning()) {
+            Cell entrance = findEmptyEntrance();
+            if (entrance != null) {
+                Vehicle car = VehicleFactory.createVehicle(new Point(entrance.getPositionX(), entrance.getPositionY())
+                        , entrance);
+                car.start();
+                grid.notifyVehicleEnter(car);
+                numActiveCars.incrementAndGet();
+            }
+        }
+    }
+    private Cell findEmptyEntrance() {
+        List<Cell> entrances = grid.getEntrances();
+        Collections.shuffle(entrances);
+        for (Cell entrance : entrances) {
+            if (!entrance.isOccupied()) {
+                return entrance;
+            }
+        }
+        return null;
+    }
+    @Override
+    public void onVehicleEnter(Vehicle vehicle) {
+        cars.put(vehicle.threadId(), vehicle);
+    }
+    @Override
+    public void onVehicleLeave(Vehicle vehicle) {
+        cars.remove(vehicle.threadId());
+    }
 }

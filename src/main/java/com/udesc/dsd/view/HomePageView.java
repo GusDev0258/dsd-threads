@@ -1,7 +1,6 @@
 package com.udesc.dsd.view;
 
 import com.udesc.dsd.controller.GridController;
-import com.udesc.dsd.model.Grid;
 import com.udesc.dsd.model.SimulationSettings;
 
 import javax.swing.*;
@@ -11,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class HomePageView {
+    private final GridController gridController = new GridController();
     private JPanel panel1;
     private JButton buttonSelecionarMalha;
     private JButton buttonIniciar;
@@ -18,8 +18,6 @@ public class HomePageView {
     private JRadioButton radioButtonSemaforo;
     private JRadioButton radioButtonMonitor;
     private JLabel nomeArquivo;
-
-    private final GridController gridController = new GridController();
     private File arquivo = null;
     private String msgErro;
 
@@ -57,7 +55,7 @@ public class HomePageView {
                 // verifica se o campo numeroCarros está vazio
                 if (numeroCarros.getText().isEmpty()) {
                     msgErro += "Por favor, insira um valor para o número de carros.\n";
-                }else {
+                } else {
                     // verifica se o valor digitado no campo numeroCarros é um número inteiro maior que zero
                     try {
                         int valor = Integer.parseInt(numeroCarros.getText());
@@ -74,7 +72,7 @@ public class HomePageView {
                 if (!radioButtonSemaforo.isSelected() && !radioButtonMonitor.isSelected()) {
                     msgErro += "Por favor, selecione pelo menos uma opção (Semáforo ou Monitor).\n";
                 }
-                if(radioButtonSemaforo.isSelected()) {
+                if (radioButtonSemaforo.isSelected()) {
                     settings.setSimulationMode(settings.getSimulationModeSemaphore());
                 } else {
                     settings.setSimulationMode(settings.getSimulationModeMonitor());
@@ -93,18 +91,13 @@ public class HomePageView {
 
                 /*----fim validacoes----*/
 
-                try {
-                    gridController.loadGrid();
-                    if (Grid.getInstance().getGridMap() != null) {
-                        GridView malhaView = new GridView();
-                        malhaView.setVisible(true);
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Não foi possível carregar a malha", "Erro na malha",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                } catch (FileNotFoundException exception) {
-                    JOptionPane.showMessageDialog(frame, "Arquivo de malha não encontrado" + exception.getMessage(),
-                            "Erro no arquivo", JOptionPane.ERROR_MESSAGE);
+                if (gridController.getGrid().getGridMap() != null) {
+                    settings.startSimulation();
+                    GridView malhaView = new GridView(gridController);
+                    malhaView.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Não foi possível carregar a malha", "Erro na malha",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
