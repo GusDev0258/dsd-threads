@@ -14,6 +14,7 @@ public abstract class Cell {
     private boolean isEntrance;
 
     private boolean isCrossing = false;
+    private String vehicleImagePath;
 
     public Cell(int x, int y, int direction) {
         this.positionX = x;
@@ -89,5 +90,24 @@ public abstract class Cell {
     abstract public boolean tryEnter();
 
     abstract public void releaseVehicle();
+    public void setVehicleImage(){
+        if (direction > Direction.ESTRADA_ESQUERDA) {
+//            setVehicleImagePath("assets/stone.png");
+            if (direction >= Direction.CRUZAMENTO_CIMA) {
+                setVehicleImagePath("src/main/resources/car_icon.png");
+            }
+
+        } else {
+            setVehicleImagePath("src/main/resources/car_icon.png");
+        }
+    }
+
+    public void setVehicleImagePath(String imagePath) {
+        this.vehicleImagePath = imagePath;
+    }
+
+    public String getVehicleImagePath() {
+        return vehicleImagePath;
+    }
 
 }
