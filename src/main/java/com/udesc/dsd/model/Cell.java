@@ -13,6 +13,8 @@ public abstract class Cell {
     private boolean isExit;
     private boolean isEntrance;
 
+    private String vehicleImagePath;
+
     public Cell(int x, int y, int direction) {
         this.positionX = x;
         this.positionY = y;
@@ -76,4 +78,25 @@ public abstract class Cell {
     public void setEntrance(boolean entrance) {
         isEntrance = entrance;
     }
+
+    public void setVehicleImage(){
+        if (direction > 4) {
+//            setVehicleImagePath("assets/stone.png");
+            if (direction >= 5) {
+                setVehicleImagePath("src/main/resources/car_icon.png");
+            }
+
+        } else {
+            setVehicleImagePath("src/main/resources/car_icon.png");
+        }
+    }
+
+    public void setVehicleImagePath(String imagePath) {
+        this.vehicleImagePath = imagePath;
+    }
+
+    public String getVehicleImagePath() {
+        return vehicleImagePath;
+    }
+
 }
