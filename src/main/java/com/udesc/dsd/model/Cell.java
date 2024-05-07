@@ -13,6 +13,8 @@ public abstract class Cell {
     private boolean isExit;
     private boolean isEntrance;
 
+    private boolean isCrossing = false;
+
     public Cell(int x, int y, int direction) {
         this.positionX = x;
         this.positionY = y;
@@ -76,4 +78,16 @@ public abstract class Cell {
     public void setEntrance(boolean entrance) {
         isEntrance = entrance;
     }
+
+    public boolean isCrossing() {
+        if (this.direction >= Direction.CRUZAMENTO_CIMA && this.direction <= Direction.CRUZAMENTO_BAIXO_ESQUERDA) {
+            this.isCrossing = true;
+        }
+        return this.isCrossing;
+    }
+
+    abstract public boolean tryEnter();
+
+    abstract public void releaseVehicle();
+
 }

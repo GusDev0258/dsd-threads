@@ -27,6 +27,7 @@ public class GridView extends JFrame {
                     cell.setExit(true);
                     grid.addExit(cell);
                 }
+
                 grid.addCell(cell);
                 JPanel celula = new CellPanel(cell);
                 celula.setBorder(BorderFactory.createLineBorder(Color.BLACK));

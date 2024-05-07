@@ -15,11 +15,13 @@ public class RoadCell extends Cell {
         return semaphore.availablePermits() == 0;
     }
 
+    @Override
     public boolean tryEnter() {
         return semaphore.tryAcquire();
     }
 
-    public void leave() {
+    @Override
+    public void releaseVehicle() {
         semaphore.release();
     }
 
