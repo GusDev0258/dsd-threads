@@ -10,12 +10,13 @@ import java.awt.*;
 public class GridView extends JFrame {
     private final JPanel malhaPanel;
     private GridController gridController;
+
     public GridView(GridController gridController) {
         this.gridController = gridController;
-        malhaPanel =
-                new JPanel(new GridLayout(gridController.getGrid().getRowCount(), gridController.getGrid().getColumCount()));
-        for (int i = 0; i < gridController.getGrid().getGridMap().length; i++) {
-            for (int j = 0; j < gridController.getGrid().getGridMap()[i].length; j++) {
+        malhaPanel = new JPanel(new GridLayout(gridController.getGrid().getColumCount(),
+                gridController.getGrid().getRowCount()));
+        for (int i = 0; i < gridController.getGrid().getRowCount(); i++) {
+         for (int j = 0; j < gridController.getGrid().getColumCount(); j++) {
                 var currentDirection = gridController.getGrid().getGridMap()[i][j];
                 var cell = CellFactory.createCell(i, j, currentDirection);
                 JPanel celula = new CellPanel(cell);
@@ -26,11 +27,12 @@ public class GridView extends JFrame {
         }
         add(malhaPanel);
         setTitle("Simulação de Tráfego");
-        setSize(1280, 720);
+        setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         gridController.startSimulation();
     }
+
     private Color getColorFromValue(int value) {
         switch (value) {
             case Direction.ESTRADA_CIMA:

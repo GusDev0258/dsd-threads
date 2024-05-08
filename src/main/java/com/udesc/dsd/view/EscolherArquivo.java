@@ -10,7 +10,7 @@ public class EscolherArquivo extends JFileChooser {
 
     public EscolherArquivo(GridController gridController) {
         try {
-            File diretorio = new File(System.getProperty("user.dir"));
+            File diretorio = new File("src/main/resources");
 
             super.setCurrentDirectory(diretorio);
 
