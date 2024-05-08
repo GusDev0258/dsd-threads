@@ -73,9 +73,9 @@ public class HomePageView {
                     msgErro += "Por favor, selecione pelo menos uma opção (Semáforo ou Monitor).\n";
                 }
                 if (radioButtonSemaforo.isSelected()) {
-                    settings.setSimulationMode(settings.getSimulationModeSemaphore());
+                    settings.setSimulationMode(SimulationSettings.SIMULATION_MODE_SEMAPHORE);
                 } else {
-                    settings.setSimulationMode(settings.getSimulationModeMonitor());
+                    settings.setSimulationMode(SimulationSettings.SIMULATION_MODE_MONITOR);
                 }
 
                 // verifica se um arquivo foi selecionado

@@ -34,6 +34,7 @@ public class Vehicle extends Thread {
         while (!isOutOfGrid) {
             try {
                 move();
+                System.out.println("movimentei!" + this.threadId());
                 Thread.sleep(1000 / speed);
             } catch (InterruptedException exception) {
                 Thread.currentThread().interrupt();

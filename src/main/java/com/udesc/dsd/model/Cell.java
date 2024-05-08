@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Cell {
-    private final String CAR_PATH = "src/main/resources/car_icon.png";
     private int positionX;
     private int positionY;
     private int direction;
@@ -16,13 +15,15 @@ public abstract class Cell {
     private boolean isEntrance;
     private boolean isCrossing = false;
     private String vehicleImagePath;
+    private String cellImagePath;
     private Map<Point, Cell> neighbors = new HashMap<>();
 
     public Cell(int x, int y, int direction) {
         this.positionX = x;
         this.positionY = y;
         this.direction = direction;
-        updateVehicleImage();
+        this.setCellImage();
+//        updateVehicleImage();
     }
 
     public void addNeighbor(Cell neighbor) {
@@ -99,22 +100,26 @@ public abstract class Cell {
 
     abstract public void releaseVehicle();
 
-    public void updateVehicleImage() {
-        if (direction >= Direction.NADA && direction <= Direction.CRUZAMENTO_BAIXO_ESQUERDA) {
-            setVehicleImagePath(ChooseDirectionImageStrategy.execute(direction));
-        } else {
-            if (this.vehicle != null) {
-                setVehicleImagePath(this.CAR_PATH);
-            }
-        }
+    public void setCellImage() {
+        this.cellImagePath = ChooseDirectionImageStrategy.execute(this.direction);
     }
-
-    public String getVehicleImagePath() {
-        updateVehicleImage();
-        return vehicleImagePath;
+    public String getCellImagePath() {
+        return this.cellImagePath;
     }
-
-    public void setVehicleImagePath(String imagePath) {
-        this.vehicleImagePath = imagePath;
-    }
+//    public void updateVehicleImage() {
+//        if (this.vehicle != null) {
+//            setVehicleImagePath(this.CAR_PATH);
+//        } else {
+//            setVehicleImagePath(ChooseDirectionImageStrategy.execute(direction));
+//        }
+//    }
+//
+//    public String getVehicleImagePath() {
+//        updateVehicleImage();
+//        return vehicleImagePath;
+//    }
+//
+//    public void setVehicleImagePath(String imagePath) {
+//        this.vehicleImagePath = imagePath;
+//    }
 }
