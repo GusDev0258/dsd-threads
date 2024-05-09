@@ -3,7 +3,7 @@ package com.udesc.dsd.model;
 public class SimulationSettings {
     public final static int SIMULATION_MODE_SEMAPHORE = 0;
     public final static int SIMULATION_MODE_MONITOR = 1;
-    public final static String CAR_IMAGE_PATH = "src/main/resources/car_icon.png";
+    public final static String CAR_IMAGE_PATH = "src/main/resources/car_icon.jpg";
     public final static String UP_CELL_IMAGE_PATH = "src/main/resources/cell_up.png";
     public final static String RIGHT_CELL_IMAGE_PATH = "src/main/resources/cell_right.png";
     public final static String DOWN_CELL_IMAGE_PATH = "src/main/resources/cell_bottom.png";
@@ -12,6 +12,7 @@ public class SimulationSettings {
     public final static String CROSS_CELL_IMAGE_PATH = "src/main/resources/cross.png";
     public static SimulationSettings instance = null;
     private int carQuantity = 0;
+    private Long carsPerSecond;
 
     private boolean simulationRunning = false;
 
@@ -54,5 +55,13 @@ public class SimulationSettings {
 
     public boolean isSimulationRunning() {
         return this.simulationRunning;
+    }
+
+    public Long getCarsPerSecond() {
+        return carsPerSecond;
+    }
+
+    public void setCarsPerSecond(Long carsPerSecond) {
+        this.carsPerSecond = carsPerSecond;
     }
 }

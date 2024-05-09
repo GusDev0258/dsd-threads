@@ -7,15 +7,22 @@ import com.udesc.dsd.model.observer.GridCarObserver;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public class GridController implements GridCarObserver {
+public class GridController implements GridCarObserver, Runnable {
     private File file = null;
     private Grid grid = Grid.getInstance();
     private SimulationSettings settings = SimulationSettings.getInstance();
     private Map<Long, Vehicle> cars = new HashMap<>();
+    private int carQtd = 0;
 
+    private Thread workerThread;
     public GridController() {
+        workerThread = new Thread(this);
+    }
+
+    public void close() {
+        workerThread.interrupt();
+        settings.stopSimulation();
     }
 
     public File getFile() throws FileNotFoundException {
@@ -59,15 +66,15 @@ public class GridController implements GridCarObserver {
     }
 
     public void populateCarsIntoTheGrid() {
-        AtomicInteger numActiveCars = new AtomicInteger(0);
-        while (numActiveCars.get() < settings.getCarQuantity() && settings.isSimulationRunning()) {
+        workerThread.start();
+        while (carQtd < settings.getCarQuantity() && settings.isSimulationRunning()) {
             Cell entrance = findEmptyEntrance();
             if (entrance != null) {
                 Vehicle car = VehicleFactory.createVehicle(new Point(entrance.getPositionX(), entrance.getPositionY())
                         , entrance);
                 car.start();
                 grid.notifyVehicleEnter(car);
-                numActiveCars.incrementAndGet();
+                carQtd++;
             }
         }
     }
@@ -94,5 +101,23 @@ public class GridController implements GridCarObserver {
     @Override
     public void onVehicleLeave(Vehicle vehicle) {
         cars.remove(vehicle.threadId());
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            if (shouldPopulateMoreCars()) {
+                populateCarsIntoTheGrid();
+            }
+            try {
+                    Thread.sleep(2000 );
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private boolean shouldPopulateMoreCars() {
+        return settings.isSimulationRunning();
     }
 }

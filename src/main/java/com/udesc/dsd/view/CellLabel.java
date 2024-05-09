@@ -11,34 +11,37 @@ import java.awt.*;
 
 public class CellLabel extends JLabel implements CellObserver {
     private final Cell labelCell;
-    public CellLabel(GridController controller, int j, int i) {
-       this.labelCell = controller.getGrid().getGridCellAt(j,i);
+    public CellLabel(GridController controller, int y, int x) {
+       this.labelCell = controller.getGrid().getGridCellAt(x,y);
        this.labelCell.addObserver(this);
        initializeCellStyle();
     }
     private void initializeCellStyle() {
         if(this.labelCell != null) {
             this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            setLabelIcon();
+            setLabelIcon(this.labelCell.getCellImagePath());
         }
     }
-    private void setLabelIcon(){
-       ImageIcon icon = new ImageIcon(this.labelCell.getCellImagePath());
+    private void setLabelIcon(String iconPath){
+       ImageIcon icon = new ImageIcon(iconPath);
        this.setIcon(icon);
+       validate();
+       repaint();
     }
 
     @Override
     public void onCarEntered(Vehicle vehicle, Cell cell) {
-       if(cell == this.labelCell) {
-           ImageIcon icon = new ImageIcon(SimulationSettings.CAR_IMAGE_PATH);
-           this.setIcon(icon);
+       if(cell.getPositionX() == this.labelCell.getPositionX() && cell.getPositionY() == this.labelCell.getPositionY()) {
+           setLabelIcon(SimulationSettings.CAR_IMAGE_PATH);
+           validate();
+           repaint();
        }
     }
 
     @Override
     public void onCarLeft(Vehicle vehicle, Cell cell) {
-        if(cell == this.labelCell) {
-            setLabelIcon();
+        if(cell.getPositionX() == this.labelCell.getPositionX() && cell.getPositionY() == this.labelCell.getPositionY()) {
+            setLabelIcon(cell.getCellImagePath());
         }
     }
 }

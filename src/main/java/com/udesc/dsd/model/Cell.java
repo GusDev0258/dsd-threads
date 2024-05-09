@@ -4,9 +4,8 @@ import com.udesc.dsd.model.observer.CellObserver;
 import com.udesc.dsd.model.strategy.ChooseDirectionImageStrategy;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 public abstract class Cell  {
     private int positionX;
@@ -16,7 +15,6 @@ public abstract class Cell  {
     private boolean isExit;
     private boolean isEntrance;
     private boolean isCrossing = false;
-    private String vehicleImagePath;
     private String cellImagePath;
     private Cell upNeighbor;
     private Cell downNeighbor;
@@ -149,5 +147,31 @@ public abstract class Cell  {
     }
     public String getCellImagePath() {
         return this.cellImagePath;
+    }
+    protected Cell getValidAdjacentCell(int direction) {
+        Cell targetCell = null;
+        switch (direction) {
+            case Direction.ESTRADA_CIMA -> {
+                targetCell = this.getUpNeighbor();
+                break;
+            }
+            case Direction.ESTRADA_DIREITA -> {
+                targetCell = this.getRightNeighbor();
+                break;
+            }
+            case Direction.ESTRADA_BAIXO -> {
+                targetCell = this.getDownNeighbor();
+                break;
+            }
+            case Direction.ESTRADA_ESQUERDA -> {
+                targetCell = this.getLeftNeighbor();
+                break;
+            }
+        }
+        return Objects.requireNonNullElseGet(targetCell, () -> throwInvalidDirection());
+    }
+
+    private Cell throwInvalidDirection() {
+        throw new IllegalStateException("Invalid direction detected in " + this.getDirection());
     }
 }

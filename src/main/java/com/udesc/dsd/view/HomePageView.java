@@ -18,6 +18,7 @@ public class HomePageView {
     private JRadioButton radioButtonSemaforo;
     private JRadioButton radioButtonMonitor;
     private JLabel nomeArquivo;
+    private JTextField txtInterval;
     private File arquivo = null;
     private String msgErro;
 
@@ -47,59 +48,70 @@ public class HomePageView {
         buttonIniciar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                /*----validacoes----*/
-
-                msgErro = "";
-
-                // verifica se o campo numeroCarros está vazio
-                if (numeroCarros.getText().isEmpty()) {
-                    msgErro += "Por favor, insira um valor para o número de carros.\n";
-                } else {
-                    // verifica se o valor digitado no campo numeroCarros é um número inteiro maior que zero
-                    try {
-                        int valor = Integer.parseInt(numeroCarros.getText());
-                        if (valor <= 0) {
-                            throw new NumberFormatException();
-                        }
-                        settings.setSimulationCarQuantity(valor);
-                    } catch (NumberFormatException ex) {
-                        msgErro += "Por favor, insira um número inteiro maior que zero no campo número de carros.\n";
-                    }
-                }
-
-                // verifica se pelo menos um dos JRadioButtons está selecionado
-                if (!radioButtonSemaforo.isSelected() && !radioButtonMonitor.isSelected()) {
-                    msgErro += "Por favor, selecione pelo menos uma opção (Semáforo ou Monitor).\n";
-                }
-                if (radioButtonSemaforo.isSelected()) {
-                    settings.setSimulationMode(SimulationSettings.SIMULATION_MODE_SEMAPHORE);
-                } else {
-                    settings.setSimulationMode(SimulationSettings.SIMULATION_MODE_MONITOR);
-                }
-
-                // verifica se um arquivo foi selecionado
-                if (arquivo == null) {
-                    msgErro += "Por favor, selecione um arquivo antes de iniciar.\n";
-                }
-
-                if (!msgErro.isEmpty()) {
-                    JOptionPane.showMessageDialog(frame, msgErro, "Erro(s) de validação",
-                            JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-
-                /*----fim validacoes----*/
-
-                if (gridController.getGrid().getGridMap() != null) {
-                    settings.startSimulation();
-                    GridView malhaView = new GridView(gridController);
-                    malhaView.setVisible(true);
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Não foi possível carregar a malha", "Erro na malha",
-                            JOptionPane.ERROR_MESSAGE);
-                }
+                settings.setCarsPerSecond(Long.parseLong(txtInterval.getText()));
+                if (fieldsValidation()) startController();
             }
         });
+    }
+
+    private void startController() {
+        if (gridController.getGrid().getGridMap() != null) {
+            settings.startSimulation();
+            GridView malhaView = new GridView(gridController);
+            malhaView.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Não foi possível carregar a malha", "Erro na malha",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private boolean fieldsValidation() {
+        /*----validacoes----*/
+
+        msgErro = "";
+
+        // verifica se o campo numeroCarros está vazio
+        if (numeroCarros.getText().isEmpty()) {
+            msgErro += "Por favor, insira um valor para o número de carros.\n";
+            return false;
+        } else {
+            // verifica se o valor digitado no campo numeroCarros é um número inteiro maior que zero
+            try {
+                int valor = Integer.parseInt(numeroCarros.getText());
+                if (valor <= 0) {
+                    throw new NumberFormatException();
+                }
+                settings.setSimulationCarQuantity(valor);
+                return true;
+            } catch (NumberFormatException ex) {
+                msgErro += "Por favor, insira um número inteiro maior que zero no campo número de carros.\n";
+            }
+        }
+
+        // verifica se pelo menos um dos JRadioButtons está selecionado
+        if (!radioButtonSemaforo.isSelected() && !radioButtonMonitor.isSelected()) {
+            msgErro += "Por favor, selecione pelo menos uma opção (Semáforo ou Monitor).\n";
+            return false;
+        }
+        if (radioButtonSemaforo.isSelected()) {
+            settings.setSimulationMode(SimulationSettings.SIMULATION_MODE_SEMAPHORE);
+        } else {
+            settings.setSimulationMode(SimulationSettings.SIMULATION_MODE_MONITOR);
+        }
+
+        // verifica se um arquivo foi selecionado
+        if (arquivo == null) {
+            msgErro += "Por favor, selecione um arquivo antes de iniciar.\n";
+            return false;
+        }
+
+        if (!msgErro.isEmpty()) {
+            JOptionPane.showMessageDialog(null, msgErro, "Erro(s) de validação",
+                    JOptionPane.WARNING_MESSAGE);
+            return true;
+        }
+
+        /*----fim validacoes----*/
+        return true;
     }
 }
