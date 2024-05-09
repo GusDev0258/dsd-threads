@@ -60,7 +60,6 @@ public class Vehicle extends Thread {
     }
 
     public void move() {
-        if (!getCurrentCell().isEntrance() ) {
             Cell nextCell = null;
             switch (getCurrentCell().getDirection()) {
                 case Direction.ESTRADA_CIMA:
@@ -76,9 +75,6 @@ public class Vehicle extends Thread {
             if (nextCell != null ) {
                 moveCar(nextCell);
             }
-        } else {
-            moveCar(chooseNextCellBasedOnDirection());
-        }
 
         if (getCurrentCell().isExit()) {
             removeCarFromGrid();

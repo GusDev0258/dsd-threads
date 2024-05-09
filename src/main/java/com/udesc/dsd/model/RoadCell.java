@@ -16,8 +16,10 @@ public class RoadCell extends Cell {
     public boolean tryEnter(Vehicle vehicle) {
         var acquired = semaphore.tryAcquire();
         if (acquired) {
-            this.setVehicle(vehicle);
-            notifyCarEntered(vehicle);
+            if(this.getVehicle() == null || this.getVehicle().threadId() != vehicle.threadId()){
+                this.setVehicle(vehicle);
+                notifyCarEntered(vehicle);
+            }
         }
         return acquired;
     }

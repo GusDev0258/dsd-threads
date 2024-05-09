@@ -23,6 +23,8 @@ public abstract class Cell  {
 
     private List<CellObserver> observers = new ArrayList<>();
 
+    private List<Cell> crossingNeighbors = new ArrayList<>();
+
     public Cell(int x, int y, int direction) {
         this.positionX = x;
         this.positionY = y;
@@ -174,5 +176,15 @@ public abstract class Cell  {
 
     private Cell throwInvalidDirection() {
         throw new IllegalStateException("Invalid direction detected in " + this.getDirection());
+    }
+
+    public List<Cell> getCrossingNeighbors() {
+        return this.crossingNeighbors;
+    }
+
+    public void addCrossingNeighbor(Cell cell) {
+        if(cell.isCrossing()) {
+            this.crossingNeighbors.add(cell);
+        }
     }
 }

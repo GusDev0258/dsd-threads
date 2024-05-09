@@ -58,30 +58,36 @@ public class Grid {
             initializeCellNeighbours();
         }
     }
-
-
-
     public void initializeCellNeighbours() {
         if (!cells.isEmpty() && gridMap.length != 0) {
             for (Point point : cells.keySet()) {
                 int x = point.getPositionX();
                 int y = point.getPositionY();
                 var currentCell = cells.get(point);
+                Cell neighborCell;
                 //Cima
                 if (y > 0 && gridMap[y - 1][x] != Direction.NADA) {
-                    currentCell.setUpNeighbor(cells.get(new Point(x, y - 1)));
+                    neighborCell = cells.get(new Point(x, y - 1));
+                    currentCell.setUpNeighbor(neighborCell);
+                    currentCell.addCrossingNeighbor(neighborCell);
                 }
                 //Baixo
                 if (y < gridMap.length - 1 && gridMap[y + 1][x] != Direction.NADA) {
-                    currentCell.setDownNeighbor(cells.get(new Point(x, y + 1)));
+                    neighborCell = cells.get(new Point(x, y + 1));
+                    currentCell.setDownNeighbor(neighborCell);
+                    currentCell.addCrossingNeighbor(neighborCell);
                 }
                 //Esquerda
                 if (x > 0 && gridMap[y][x - 1] != Direction.NADA) {
-                    currentCell.setLeftNeighbor(cells.get(new Point(x - 1, y)));
+                    neighborCell = cells.get(new Point(x - 1, y));
+                    currentCell.setLeftNeighbor(neighborCell);
+                    currentCell.addCrossingNeighbor(neighborCell);
                 }
                 //Direita
                 if (x < gridMap[y].length - 1 && gridMap[y][x + 1] != Direction.NADA) {
-                    currentCell.setRightNeighbor(cells.get(new Point(x + 1, y)));
+                    neighborCell = cells.get(new Point(x + 1, y));
+                    currentCell.setRightNeighbor(neighborCell);
+                    currentCell.addCrossingNeighbor(neighborCell);
                 }
             }
         }
