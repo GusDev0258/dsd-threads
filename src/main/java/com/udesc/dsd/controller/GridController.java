@@ -74,6 +74,9 @@ public class GridController implements Observer {
         }
         return null;
     }
+    public List<Cell> getGridCells() {
+       return grid.getCells();
+    }
     @Override
     public void onVehicleEnter(Vehicle vehicle) {
         cars.put(vehicle.threadId(), vehicle);
