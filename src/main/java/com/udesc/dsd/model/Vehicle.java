@@ -49,7 +49,7 @@ public class Vehicle extends Thread {
     public void run() {
         while (!isOutOfGrid) {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(3000);
                 move();
                 System.out.println("movimentei!" + this.threadId());
             } catch (InterruptedException exception) {
@@ -73,7 +73,7 @@ public class Vehicle extends Thread {
                     break;
             }
 
-            if (nextCell != null && !getCurrentCell().isCrossing()) {
+            if (nextCell != null ) {
                 moveCar(nextCell);
             }
         } else {

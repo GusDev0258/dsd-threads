@@ -18,6 +18,7 @@ public class GridController implements GridCarObserver, Runnable {
     private Thread workerThread;
     public GridController() {
         workerThread = new Thread(this);
+        workerThread.start();
     }
 
     public void close() {
@@ -66,10 +67,9 @@ public class GridController implements GridCarObserver, Runnable {
     }
 
     public void populateCarsIntoTheGrid() {
-        workerThread.start();
         while (carQtd < settings.getCarQuantity() && settings.isSimulationRunning()) {
             Cell entrance = findEmptyEntrance();
-            if (entrance != null) {
+            if (entrance != null ) {
                 Vehicle car = VehicleFactory.createVehicle(new Point(entrance.getPositionX(), entrance.getPositionY())
                         , entrance);
                 car.start();

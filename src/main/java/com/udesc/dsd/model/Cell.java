@@ -167,6 +167,7 @@ public abstract class Cell  {
                 targetCell = this.getLeftNeighbor();
                 break;
             }
+
         }
         return Objects.requireNonNullElseGet(targetCell, () -> throwInvalidDirection());
     }

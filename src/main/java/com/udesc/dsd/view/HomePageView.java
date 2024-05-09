@@ -18,7 +18,6 @@ public class HomePageView {
     private JRadioButton radioButtonSemaforo;
     private JRadioButton radioButtonMonitor;
     private JLabel nomeArquivo;
-    private JTextField txtInterval;
     private File arquivo = null;
     private String msgErro;
 
@@ -48,7 +47,6 @@ public class HomePageView {
         buttonIniciar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                settings.setCarsPerSecond(Long.parseLong(txtInterval.getText()));
                 if (fieldsValidation()) startController();
             }
         });
