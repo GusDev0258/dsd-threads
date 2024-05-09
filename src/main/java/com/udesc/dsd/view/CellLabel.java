@@ -1,5 +1,6 @@
 package com.udesc.dsd.view;
 
+import com.udesc.dsd.controller.GridController;
 import com.udesc.dsd.model.Cell;
 import com.udesc.dsd.model.SimulationSettings;
 import com.udesc.dsd.model.Vehicle;
@@ -10,8 +11,8 @@ import java.awt.*;
 
 public class CellLabel extends JLabel {
     private final Cell labelCell;
-    public CellLabel(Cell cell) {
-       this.labelCell = cell;
+    public CellLabel(GridController controller, int j, int i) {
+       this.labelCell = controller.getGrid().getGridCellAt(j,i);
        initializeCellStyle();
     }
     private void initializeCellStyle() {
