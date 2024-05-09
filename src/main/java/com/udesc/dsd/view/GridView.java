@@ -1,5 +1,4 @@
 package com.udesc.dsd.view;
-
 import com.udesc.dsd.controller.GridController;
 
 import javax.swing.*;

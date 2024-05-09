@@ -1,7 +1,7 @@
 package com.udesc.dsd.model;
 
 import com.udesc.dsd.model.factory.CellFactory;
-import com.udesc.dsd.model.observer.Observer;
+import com.udesc.dsd.model.observer.GridCarObserver;
 import com.udesc.dsd.model.strategy.EntranceStrategy;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class Grid {
     private int rowCount;
     private int columCount;
     private int[][] gridMap;
-    private List<Observer> observers = new ArrayList<>();
+    private List<GridCarObserver> observers = new ArrayList<>();
 
     private Grid() {
     }
@@ -29,18 +29,18 @@ public class Grid {
         return instance;
     }
 
-    public void addObserver(Observer observer) {
+    public void addObserver(GridCarObserver observer) {
         observers.add(observer);
     }
 
     public void notifyVehicleEnter(Vehicle vehicle) {
-        for (Observer obs : observers) {
+        for (GridCarObserver obs : observers) {
             obs.onVehicleEnter(vehicle);
         }
     }
 
     public void notifyVehicleLeave(Vehicle vehicle) {
-        for (Observer obs : observers) {
+        for (GridCarObserver obs : observers) {
             obs.onVehicleLeave(vehicle);
         }
     }
@@ -66,18 +66,22 @@ public class Grid {
             for (Point point : cells.keySet()) {
                 int x = point.getPositionX();
                 int y = point.getPositionY();
-
+                var currentCell = cells.get(point);
+                //Cima
                 if (y > 0 && gridMap[y - 1][x] != Direction.NADA) {
-                    cells.get(point).addNeighbor(cells.get(new Point(x, y - 1)));
+                    currentCell.setUpNeighbor(cells.get(new Point(x, y - 1)));
                 }
+                //Baixo
                 if (y < gridMap.length - 1 && gridMap[y + 1][x] != Direction.NADA) {
-                    cells.get(point).addNeighbor(cells.get(new Point(x, y + 1)));
+                    currentCell.setDownNeighbor(cells.get(new Point(x, y + 1)));
                 }
+                //Esquerda
                 if (x > 0 && gridMap[y][x - 1] != Direction.NADA) {
-                    cells.get(point).addNeighbor(cells.get(new Point(x - 1, y)));
+                    currentCell.setLeftNeighbor(cells.get(new Point(x - 1, y)));
                 }
+                //Direita
                 if (x < gridMap[y].length - 1 && gridMap[y][x + 1] != Direction.NADA) {
-                    cells.get(point).addNeighbor(cells.get(new Point(x + 1, y)));
+                    currentCell.setRightNeighbor(cells.get(new Point(x + 1, y)));
                 }
             }
         }

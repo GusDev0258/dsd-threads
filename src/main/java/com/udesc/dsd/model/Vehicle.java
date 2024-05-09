@@ -1,5 +1,7 @@
 package com.udesc.dsd.model;
 
+import java.util.Random;
+
 public class Vehicle extends Thread {
     private int x, y;
     private int speed;
@@ -43,32 +45,89 @@ public class Vehicle extends Thread {
     }
 
     public void move() {
-        if (currentCell == null || currentCell.getNeighbors().isEmpty()) {
+        if(currentCell == null) {
             return;
         }
-        Cell nextCell = chooseNextCell();
-        if (nextCell != null && nextCell.tryEnter(this)) {
-            Cell previousCell = this.currentCell;
-            setCurrentCell(nextCell);
-            if (previousCell != null) {
-                previousCell.releaseVehicle();
+        if(currentCell.isEntrance()) {
+            Cell nextCell;
+            switch (currentCell.getDirection()) {
+                case Direction.ESTRADA_CIMA -> {
+                    nextCell = currentCell.getUpNeighbor();
+                    moveCar(nextCell);
+                    break;
+                }
+                case Direction.ESTRADA_DIREITA -> {
+                    nextCell = currentCell.getRightNeighbor();
+                    moveCar(nextCell);
+                }
+                case Direction.ESTRADA_BAIXO -> {
+                    nextCell = currentCell.getDownNeighbor();
+                    moveCar(nextCell);
+                }
+                case Direction.ESTRADA_ESQUERDA -> {
+                    nextCell = currentCell.getLeftNeighbor();
+                    moveCar(nextCell);
+                }
             }
+
+
+        }
+    }
+    private void moveCar(Cell nextCell) {
+        var enterCell = nextCell.tryEnter(this);
+        if(enterCell) {
             this.x = nextCell.getPositionX();
             this.y = nextCell.getPositionY();
-        }
-        if (currentCell.isExit()) {
-            this.removeCarFromGrid();
-            this.interrupt();
-            Grid.getInstance().notifyVehicleLeave(this);
+            this.currentCell.releaseVehicle();
+            this.setCurrentCell(nextCell);
         }
     }
-
-    private Cell chooseNextCell() {
-        for (Cell neighbor : currentCell.getNeighboursCells()) {
-            if (!neighbor.isOccupied()) {
-                return neighbor;
-            }
-        }
-        return null;
-    }
+//    public void move() {
+//        if (currentCell == null ) {
+//            return;
+//        }
+//        Cell nextCell = chooseNextCell();
+//        if (nextCell != null && nextCell.tryEnter(this)) {
+//            Cell previousCell = this.currentCell;
+//            setCurrentCell(nextCell);
+//            if (previousCell != null) {
+//                previousCell.releaseVehicle();
+//            }
+//            this.x = nextCell.getPositionX();
+//            this.y = nextCell.getPositionY();
+//        }
+//        if (currentCell.isExit()) {
+//            this.removeCarFromGrid();
+//            this.interrupt();
+//            Grid.getInstance().notifyVehicleLeave(this);
+//        }
+//    }
+//
+//    private Cell chooseNextCell() {
+//        for (Cell neighbor : currentCell.getNeighboursCells()) {
+//            if(neighbor.getDirection() ==  currentCell.getDirection()) {
+//                if (!neighbor.isOccupied()) {
+//                    return neighbor;
+//                }
+//            }
+//        }
+//        return null;
+//    }
+//    private void moveForward(Cell destinationCell) {
+//       if(destinationCell.getDirection() == currentCell.getDirection()){
+//           moveCar(destinationCell);
+//       } else if(destinationCell.isCrossing()) {
+//
+//       }
+//    }
+//    private void moveCar(Cell destinationCell) {
+//       var current = this.currentCell;
+//       var entered = destinationCell.tryEnter(this);
+//       if(entered) {
+//           this.x = destinationCell.getPositionX();
+//           this.y = destinationCell.getPositionY();
+//           this.setCurrentCell(destinationCell);
+//           current.releaseVehicle();
+//       }
+//    }
 }

@@ -1,12 +1,14 @@
 package com.udesc.dsd.model;
 
+import com.udesc.dsd.model.observer.CellObserver;
 import com.udesc.dsd.model.strategy.ChooseDirectionImageStrategy;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Cell {
+public abstract class Cell  {
     private int positionX;
     private int positionY;
     private int direction;
@@ -16,27 +18,37 @@ public abstract class Cell {
     private boolean isCrossing = false;
     private String vehicleImagePath;
     private String cellImagePath;
-    private Map<Point, Cell> neighbors = new HashMap<>();
+    private Cell upNeighbor;
+    private Cell downNeighbor;
+    private Cell rightNeighbor;
+    private Cell leftNeighbor;
+
+    private List<CellObserver> observers = new ArrayList<>();
 
     public Cell(int x, int y, int direction) {
         this.positionX = x;
         this.positionY = y;
         this.direction = direction;
         this.setCellImage();
-//        updateVehicleImage();
     }
 
-    public void addNeighbor(Cell neighbor) {
-        Point point = new Point(neighbor.getPositionX(), neighbor.getPositionY());
-        neighbors.put(point, neighbor);
+    public void addObserver(CellObserver observer) {
+        observers.add(observer);
     }
 
-    public Map<Point, Cell> getNeighbors() {
-        return neighbors;
+    public void removeObserver(CellObserver observer) {
+        observers.add(observer);
     }
 
-    public List<Cell> getNeighboursCells() {
-        return neighbors.values().stream().toList();
+    public void notifyCarEntered(Vehicle vehicle){
+        for ( CellObserver obs: observers) {
+            obs.onCarEntered(vehicle, this);
+        }
+    }
+    public void notifyCarLeft(Vehicle vehicle){
+        for(CellObserver observer: observers) {
+            observer.onCarLeft(vehicle, this);
+        }
     }
 
     public abstract boolean isOccupied();
@@ -96,6 +108,38 @@ public abstract class Cell {
         return this.isCrossing;
     }
 
+    public Cell getUpNeighbor() {
+        return upNeighbor;
+    }
+
+    public void setUpNeighbor(Cell upNeighbor) {
+        this.upNeighbor = upNeighbor;
+    }
+
+    public Cell getDownNeighbor() {
+        return downNeighbor;
+    }
+
+    public void setDownNeighbor(Cell downNeighbor) {
+        this.downNeighbor = downNeighbor;
+    }
+
+    public Cell getRightNeighbor() {
+        return rightNeighbor;
+    }
+
+    public void setRightNeighbor(Cell rightNeighbor) {
+        this.rightNeighbor = rightNeighbor;
+    }
+
+    public Cell getLeftNeighbor() {
+        return leftNeighbor;
+    }
+
+    public void setLeftNeighbor(Cell leftNeighbor) {
+        this.leftNeighbor = leftNeighbor;
+    }
+
     abstract public boolean tryEnter(Vehicle vehicle);
 
     abstract public void releaseVehicle();
@@ -106,20 +150,4 @@ public abstract class Cell {
     public String getCellImagePath() {
         return this.cellImagePath;
     }
-//    public void updateVehicleImage() {
-//        if (this.vehicle != null) {
-//            setVehicleImagePath(this.CAR_PATH);
-//        } else {
-//            setVehicleImagePath(ChooseDirectionImageStrategy.execute(direction));
-//        }
-//    }
-//
-//    public String getVehicleImagePath() {
-//        updateVehicleImage();
-//        return vehicleImagePath;
-//    }
-//
-//    public void setVehicleImagePath(String imagePath) {
-//        this.vehicleImagePath = imagePath;
-//    }
 }

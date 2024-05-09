@@ -2,34 +2,38 @@ package com.udesc.dsd.controller;
 
 import com.udesc.dsd.model.*;
 import com.udesc.dsd.model.factory.VehicleFactory;
-import com.udesc.dsd.model.observer.Observer;
+import com.udesc.dsd.model.observer.GridCarObserver;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class GridController implements Observer {
+public class GridController implements GridCarObserver {
     private File file = null;
     private Grid grid = Grid.getInstance();
     private SimulationSettings settings = SimulationSettings.getInstance();
     private Map<Long, Vehicle> cars = new HashMap<>();
+
     public GridController() {
     }
+
     public File getFile() throws FileNotFoundException {
         if (!this.file.exists()) {
             throw new FileNotFoundException("Arquivo não definido");
         }
         return this.file;
     }
+
     public void setFile(File file) throws FileNotFoundException {
-            this.file = file;
-            this.loadGrid();
+        this.file = file;
+        this.loadGrid();
     }
+
     public void loadGrid() throws FileNotFoundException {
         Scanner scanner = new Scanner(this.file);
-        int columns = scanner.nextInt();
         int rows = scanner.nextInt();
+        int columns = scanner.nextInt();
         grid.setColumCount(columns);
         grid.setRowCount(rows);
         var gridMap = new int[rows][columns];
@@ -44,13 +48,16 @@ public class GridController implements Observer {
         scanner.close();
         grid.initializeCells();
     }
+
     public Grid getGrid() {
         return this.grid;
     }
+
     public void startSimulation() {
         grid.addObserver(this);
         populateCarsIntoTheGrid();
     }
+
     public void populateCarsIntoTheGrid() {
         AtomicInteger numActiveCars = new AtomicInteger(0);
         while (numActiveCars.get() < settings.getCarQuantity() && settings.isSimulationRunning()) {
@@ -64,23 +71,26 @@ public class GridController implements Observer {
             }
         }
     }
+
     private Cell findEmptyEntrance() {
         List<Cell> entrances = grid.getEntrances();
-        Collections.shuffle(entrances);
-        for (Cell entrance : entrances) {
-            if (!entrance.isOccupied()) {
-                return entrance;
-            }
+        var randomIndex = new Random().nextInt(0, entrances.size());
+        var entrance = entrances.get(randomIndex);
+        if (!entrance.isOccupied()) {
+            return entrance;
         }
         return null;
     }
+
     public List<Cell> getGridCells() {
-       return grid.getCells();
+        return grid.getCells();
     }
+
     @Override
     public void onVehicleEnter(Vehicle vehicle) {
         cars.put(vehicle.threadId(), vehicle);
     }
+
     @Override
     public void onVehicleLeave(Vehicle vehicle) {
         cars.remove(vehicle.threadId());

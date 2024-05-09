@@ -15,14 +15,16 @@ public class RoadCell extends Cell {
     @Override
     public boolean tryEnter(Vehicle vehicle) {
         var acquired = semaphore.tryAcquire();
-        if (isOccupied()) {
+        if (acquired) {
             this.setVehicle(vehicle);
+            notifyCarEntered(vehicle);
         }
         return acquired;
     }
     @Override
     public void releaseVehicle() {
         semaphore.release();
+        notifyCarLeft(getVehicle());
         this.setVehicle(null);
     }
     public Semaphore getSemaphore() {
