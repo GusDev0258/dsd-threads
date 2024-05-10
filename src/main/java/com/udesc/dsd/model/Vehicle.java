@@ -71,7 +71,6 @@ public class Vehicle extends Thread {
                 default:
                     break;
             }
-
             if (nextCell != null ) {
                 moveCar(nextCell);
             }
