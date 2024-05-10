@@ -190,10 +190,6 @@ public abstract class Cell  {
 
     //validacao para dizer se a célula está antes de em um cruzamento
     public boolean isNextCellACrossing(){
-        if (this.getCrossingNeighbors().size()  >= 1) {
-            return true;
-        }else{
-            return false;
-        }
+        return !this.isCrossing() && this.getCrossingNeighbors().size() == 1;
     }
 }
