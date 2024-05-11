@@ -16,14 +16,14 @@ public abstract class Cell  {
     private boolean isEntrance;
     private boolean isCrossing = false;
     private String cellImagePath;
-    private Cell upNeighbor;
-    private Cell downNeighbor;
-    private Cell rightNeighbor;
-    private Cell leftNeighbor;
+    private Cell upNeighbour;
+    private Cell downNeighbour;
+    private Cell rightNeighbour;
+    private Cell leftNeighbour;
 
     private List<CellObserver> observers = new ArrayList<>();
 
-    private List<Cell> crossingNeighbors = new ArrayList<>();
+    private List<Cell> crossingNeighbours = new ArrayList<>();
 
     public Cell(int x, int y, int direction) {
         this.positionX = x;
@@ -108,36 +108,36 @@ public abstract class Cell  {
         return this.isCrossing;
     }
 
-    public Cell getUpNeighbor() {
-        return upNeighbor;
+    public Cell getUpNeighbour() {
+        return upNeighbour;
     }
 
-    public void setUpNeighbor(Cell upNeighbor) {
-        this.upNeighbor = upNeighbor;
+    public void setUpNeighbour(Cell upNeighbour) {
+        this.upNeighbour = upNeighbour;
     }
 
-    public Cell getDownNeighbor() {
-        return downNeighbor;
+    public Cell getDownNeighbour() {
+        return downNeighbour;
     }
 
-    public void setDownNeighbor(Cell downNeighbor) {
-        this.downNeighbor = downNeighbor;
+    public void setDownNeighbour(Cell downNeighbour) {
+        this.downNeighbour = downNeighbour;
     }
 
-    public Cell getRightNeighbor() {
-        return rightNeighbor;
+    public Cell getRightNeighbour() {
+        return rightNeighbour;
     }
 
-    public void setRightNeighbor(Cell rightNeighbor) {
-        this.rightNeighbor = rightNeighbor;
+    public void setRightNeighbour(Cell rightNeighbour) {
+        this.rightNeighbour = rightNeighbour;
     }
 
-    public Cell getLeftNeighbor() {
-        return leftNeighbor;
+    public Cell getLeftNeighbour() {
+        return leftNeighbour;
     }
 
-    public void setLeftNeighbor(Cell leftNeighbor) {
-        this.leftNeighbor = leftNeighbor;
+    public void setLeftNeighbour(Cell leftNeighbour) {
+        this.leftNeighbour = leftNeighbour;
     }
 
     abstract public boolean tryEnter(Vehicle vehicle);
@@ -154,19 +154,19 @@ public abstract class Cell  {
         Cell targetCell = null;
         switch (direction) {
             case Direction.ESTRADA_CIMA -> {
-                targetCell = this.getUpNeighbor();
+                targetCell = this.getUpNeighbour();
                 break;
             }
             case Direction.ESTRADA_DIREITA -> {
-                targetCell = this.getRightNeighbor();
+                targetCell = this.getRightNeighbour();
                 break;
             }
             case Direction.ESTRADA_BAIXO -> {
-                targetCell = this.getDownNeighbor();
+                targetCell = this.getDownNeighbour();
                 break;
             }
             case Direction.ESTRADA_ESQUERDA -> {
-                targetCell = this.getLeftNeighbor();
+                targetCell = this.getLeftNeighbour();
                 break;
             }
 
@@ -178,37 +178,37 @@ public abstract class Cell  {
         throw new IllegalStateException("Invalid direction detected in " + this.getDirection());
     }
 
-    public List<Cell> getCrossingNeighbors() {
-        return this.crossingNeighbors;
+    public List<Cell> getCrossingNeighbours() {
+        return this.crossingNeighbours;
     }
 
     public void addCrossingNeighbor(Cell cell) {
         if(cell.isCrossing()) {
-            this.crossingNeighbors.add(cell);
+            this.crossingNeighbours.add(cell);
         }
     }
 
     //validacao para dizer se a célula está antes de em um cruzamento
     public boolean isNextCellACrossing(){
-        if(!this.isCrossing() && this.getCrossingNeighbors().size() == 1)  {
+        if(!this.isCrossing() && this.getCrossingNeighbours().size() == 1)  {
           switch(direction) {
               case Direction.ESTRADA_CIMA -> {
-                  if(this.upNeighbor.isCrossing()){
+                  if(this.upNeighbour.isCrossing()){
                       return true;
                   }
               }
               case Direction.ESTRADA_DIREITA -> {
-                  if(this.rightNeighbor.isCrossing()) {
+                  if(this.rightNeighbour.isCrossing()) {
                       return true;
                   }
               }
               case Direction.ESTRADA_BAIXO -> {
-                  if(this.downNeighbor.isCrossing()){
+                  if(this.downNeighbour.isCrossing()){
                       return true;
                   }
               }
               case Direction.ESTRADA_ESQUERDA -> {
-                  if(this.leftNeighbor.isCrossing()) {
+                  if(this.leftNeighbour.isCrossing()) {
                       return true;
                   }
               }

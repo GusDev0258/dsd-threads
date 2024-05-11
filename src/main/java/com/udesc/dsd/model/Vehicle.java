@@ -18,6 +18,11 @@ public class Vehicle extends Thread {
     private static final String CROSS_POSSIBILITY_LEFT = "crossingLeft";
     private static final String CROSS_POSSIBILITY_RIGHT = "crossingRight";
 
+    //O cruzamento poderá ter no máximo 4 possibilidades:
+    private boolean crossingUp;
+    private boolean crossingRight;
+    private boolean crossingDown;
+    private boolean crossingLeft;
 
     public Vehicle(int x, int y, int speed, Grid grid) {
         this.x = x;
@@ -51,6 +56,18 @@ public class Vehicle extends Thread {
         this.currentCell.setVehicle(this);
     }
 
+    private void setCrossingUp(boolean crossingUp){
+        this.crossingUp = crossingUp;
+    }
+    private void setCrossingRight(boolean crossingRight){
+        this.crossingRight = crossingRight;
+    }
+    private void setCrossingDown(boolean crossingDown){
+        this.crossingDown = crossingDown;
+    }
+    private void setCrossingLeft(boolean crossingLeft){
+        this.crossingLeft = crossingLeft;
+    }
     public boolean removeCarFromGrid() {
         if (this.currentCell != null) {
             this.currentCell.releaseVehicle();
@@ -66,7 +83,7 @@ public class Vehicle extends Thread {
                 Thread.sleep(1000);
                 move();
                 if (currentCell.isNextCellACrossing()){
-                    verifyChoicePossibilities();
+                    verifyCrossingChoicePossibilities();
                     String destino = crossingChoice();// essa aqui é a escolha do carro apos chegar em um cruzamento
                     followPath(destino);
                 }
@@ -94,7 +111,7 @@ public class Vehicle extends Thread {
 
     private void moveVehicleTo(int nextX, int nextY) {
         Cell nextCell = grid.getGridCellAt(nextX, nextY);
-        if (nextCell != null) {
+        if (nextCell != null && !nextCell.isOccupied()) {
             moveCar(nextCell);
         }
     }
@@ -106,7 +123,7 @@ public class Vehicle extends Thread {
                 case Direction.ESTRADA_DIREITA:
                 case Direction.ESTRADA_BAIXO:
                 case Direction.ESTRADA_ESQUERDA:
-                    nextCell = chooseNextCellBasedOnDirection();
+                    nextCell = chooseCellToMoveVehicleForward();
                     break;
                 default:
                     break;
@@ -120,7 +137,7 @@ public class Vehicle extends Thread {
         }
     }
 
-    private Cell chooseNextCellBasedOnDirection() {
+    private Cell chooseCellToMoveVehicleForward() {
         return currentCell.getValidAdjacentCell(getCurrentCell().getDirection());
     }
 
@@ -134,16 +151,10 @@ public class Vehicle extends Thread {
         }
     }
 
-    //O cruzamento poderá ter no máximo 4 possibilidades:
-    private boolean crossingUp;
-    private boolean crossingRight;
-    private boolean crossingDown;
-    private boolean crossingLeft;
-
     //Porém a direção que o carro já está (antes de entrar no cruzamento) não pode ser escolhida pois o carro não faz meia volta
 
     //verifica quais caminhos existem ao final do cruzamento para que o carro escolha um aleatório
-    private void verifyChoicePossibilities(){
+    private void verifyCrossingChoicePossibilities(){
         switch (getCurrentCell().getDirection()) {
             case Direction.ESTRADA_CIMA: //significa que ele vem de baixo, no cruzamento pode escolher entre subir, esquerda ou direita
                 if(returnCellDirection(x,y-3) == Direction.ESTRADA_CIMA) { //valida se a célula acima do cruzamento existe e é uma estrada
@@ -196,17 +207,11 @@ public class Vehicle extends Thread {
         }
     }
 
-    private void setCrossingUp(boolean crossingUp){
-        this.crossingUp = crossingUp;
-    }
-    private void setCrossingRight(boolean crossingRight){
-        this.crossingRight = crossingRight;
-    }
-    private void setCrossingDown(boolean crossingDown){
-        this.crossingDown = crossingDown;
-    }
-    private void setCrossingLeft(boolean crossingLeft){
-        this.crossingLeft = crossingLeft;
+    private String crossingChoice(){
+        crossingPossibilities = getCrossingPossibilities();
+        Random random = new Random();
+        String randomlySelectedAttribute = crossingPossibilities.get(random.nextInt(0, crossingPossibilities.size()));
+        return randomlySelectedAttribute;
     }
 
     //cria lista com possibilidades de escolha
@@ -227,12 +232,6 @@ public class Vehicle extends Thread {
     }
 
     //dentre as possibilidades que o carro pode ter, escolhe um aleatoriamente
-    private String crossingChoice(){
-        crossingPossibilities = getCrossingPossibilities();
-        Random random = new Random();
-        String randomlySelectedAttribute = crossingPossibilities.get(random.nextInt(crossingPossibilities.size()));
-        return randomlySelectedAttribute;
-    }
 
     private int returnCellDirection(int x, int y){
         Cell cell = grid.getGridCellAt(x,y);

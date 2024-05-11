@@ -68,25 +68,25 @@ public class Grid {
                 //Cima
                 if (y > 0 && gridMap[y - 1][x] != Direction.NADA) {
                     neighborCell = cells.get(new Point(x, y - 1));
-                    currentCell.setUpNeighbor(neighborCell);
+                    currentCell.setUpNeighbour(neighborCell);
                     currentCell.addCrossingNeighbor(neighborCell);
                 }
                 //Baixo
                 if (y < gridMap.length - 1 && gridMap[y + 1][x] != Direction.NADA) {
                     neighborCell = cells.get(new Point(x, y + 1));
-                    currentCell.setDownNeighbor(neighborCell);
+                    currentCell.setDownNeighbour(neighborCell);
                     currentCell.addCrossingNeighbor(neighborCell);
                 }
                 //Esquerda
                 if (x > 0 && gridMap[y][x - 1] != Direction.NADA) {
                     neighborCell = cells.get(new Point(x - 1, y));
-                    currentCell.setLeftNeighbor(neighborCell);
+                    currentCell.setLeftNeighbour(neighborCell);
                     currentCell.addCrossingNeighbor(neighborCell);
                 }
                 //Direita
                 if (x < gridMap[y].length - 1 && gridMap[y][x + 1] != Direction.NADA) {
                     neighborCell = cells.get(new Point(x + 1, y));
-                    currentCell.setRightNeighbor(neighborCell);
+                    currentCell.setRightNeighbour(neighborCell);
                     currentCell.addCrossingNeighbor(neighborCell);
                 }
             }
