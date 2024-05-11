@@ -279,8 +279,8 @@ public class Vehicle extends Thread {
     }
 
     private List<Cell> returnCrossingSteps(String destino) {
-        List<Cell> crossingSteps = new ArrayList<>();
         //deve gravar em ordem
+        crossingPath.clear();
         switch (destino) {
             case CROSS_POSSIBILITY_UP:
                 switch (getCurrentCell().getDirection()) {
@@ -288,25 +288,25 @@ public class Vehicle extends Thread {
                         step1 = getGridCellBasedOnCoordinates(x, y - 1);
                         step2 = getGridCellBasedOnCoordinates(x, y - 2);
                         destiny = getGridCellBasedOnCoordinates(x, y - 3);
-                        crossingSteps.add(step1);
-                        crossingSteps.add(step2);
-                        crossingSteps.add(destiny);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_DIREITA:
                         step1 = getGridCellBasedOnCoordinates(x + 1, y);
                         step2 = getGridCellBasedOnCoordinates(x + 2, y);
                         step3 = getGridCellBasedOnCoordinates(x + 2, y - 1);
                         destiny = getGridCellBasedOnCoordinates(x + 2, y - 2);
-                        crossingSteps.add(step1);
-                        crossingSteps.add(step2);
-                        crossingSteps.add(step3);
-                        crossingSteps.add(destiny);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(step3);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_ESQUERDA:
                         step1 = getGridCellBasedOnCoordinates(x - 1, y);
                         destiny = getGridCellBasedOnCoordinates(x - 1, y - 1);
-                        crossingSteps.add(step1);
-                        crossingSteps.add(destiny);
+                        crossingPath.add(step1);
+                        crossingPath.add(destiny);
                         break;
                 }
                 break;
@@ -315,26 +315,26 @@ public class Vehicle extends Thread {
                     case Direction.ESTRADA_CIMA:
                         step1 = getGridCellBasedOnCoordinates(x, y - 1);
                         destiny = getGridCellBasedOnCoordinates(x + 1, y - 1);
-                        crossingSteps.add(step1);
-                        crossingSteps.add(destiny);
+                        crossingPath.add(step1);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_DIREITA:
                         step1 = getGridCellBasedOnCoordinates(x + 1, y);
                         step2 = getGridCellBasedOnCoordinates(x + 2, y);
                         destiny = getGridCellBasedOnCoordinates(x + 3, y);
-                        crossingSteps.add(step1);
-                        crossingSteps.add(step2);
-                        crossingSteps.add(destiny);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_BAIXO:
                         step1 = getGridCellBasedOnCoordinates(x, y + 1);
                         step2 = getGridCellBasedOnCoordinates(x, y + 2);
                         step3 = getGridCellBasedOnCoordinates(x + 1, y + 2);
                         destiny = getGridCellBasedOnCoordinates(x + 2, y + 2);
-                        crossingSteps.add(step1);
-                        crossingSteps.add(step2);
-                        crossingSteps.add(step3);
-                        crossingSteps.add(destiny);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(step3);
+                        crossingPath.add(destiny);
                         break;
                 }
                 break;
@@ -343,26 +343,26 @@ public class Vehicle extends Thread {
                     case Direction.ESTRADA_DIREITA:
                         step1 = getGridCellBasedOnCoordinates(x + 1, y);
                         destiny = getGridCellBasedOnCoordinates(x + 1, y + 1);
-                        crossingSteps.add(step1);
-                        crossingSteps.add(destiny);
+                        crossingPath.add(step1);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_BAIXO:
                         step1 = getGridCellBasedOnCoordinates(x, y + 1);
                         step2 = getGridCellBasedOnCoordinates(x, y + 2);
                         destiny = getGridCellBasedOnCoordinates(x, y + 3);
-                        crossingSteps.add(step1);
-                        crossingSteps.add(step2);
-                        crossingSteps.add(destiny);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_ESQUERDA:
                         step1 = getGridCellBasedOnCoordinates(x - 1, y);
                         step2 = getGridCellBasedOnCoordinates(x - 2, y);
                         step3 = getGridCellBasedOnCoordinates(x - 2, y + 1);
                         destiny = getGridCellBasedOnCoordinates(x - 2, y + 2);
-                        crossingSteps.add(step1);
-                        crossingSteps.add(step2);
-                        crossingSteps.add(step3);
-                        crossingSteps.add(destiny);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(step3);
+                        crossingPath.add(destiny);
                         break;
                 }
                 break;
@@ -373,32 +373,33 @@ public class Vehicle extends Thread {
                         step2 = getGridCellBasedOnCoordinates(x, y - 2);
                         step3 = getGridCellBasedOnCoordinates(x - 1, y - 2);
                         destiny = getGridCellBasedOnCoordinates(x - 2, y - 2);
-                        crossingSteps.add(step1);
-                        crossingSteps.add(step2);
-                        crossingSteps.add(step3);
-                        crossingSteps.add(destiny);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(step3);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_BAIXO:
                         step1 = getGridCellBasedOnCoordinates(x, y + 1);
                         destiny = getGridCellBasedOnCoordinates(x - 1, y + 1);
-                        crossingSteps.add(step1);
-                        crossingSteps.add(destiny);
+                        crossingPath.add(step1);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_ESQUERDA:
-                        step1 = getGridCellBasedOnCoordinates(x - 1, y);
-                        step2 = getGridCellBasedOnCoordinates(x - 2, y);
-                        destiny = getGridCellBasedOnCoordinates(x - 3, y);
-                        crossingSteps.add(step1);
-                        crossingSteps.add(step2);
-                        crossingSteps.add(destiny);
+                        step1 = getGridCellBasedOnCoordinates(x + 1, y);
+                        step2 = getGridCellBasedOnCoordinates(x + 2, y);
+                        destiny = getGridCellBasedOnCoordinates(x + 3, y);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(destiny);
                         break;
                 }
                 break;
         }
-        return crossingSteps;
+        return crossingPath;
     }
 
     private Cell getGridCellBasedOnCoordinates(int x, int y) {
         return grid.getGridCellAt(x, y);
     }
+
 }
