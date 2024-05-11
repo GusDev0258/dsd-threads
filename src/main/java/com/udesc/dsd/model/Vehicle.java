@@ -96,16 +96,16 @@ public class Vehicle extends Thread {
     }
 
     private void followPath(String destino) {
-        List<Cell> path = returnCrossingSteps(destino); //guardar as células que pertencem ao caminho escolhido
+        returnCrossingSteps(destino); //guardar as células que pertencem ao caminho escolhido
         int acquiredCells = 0;
-        for (Cell step : path) {
+        for (Cell step : this.crossingPath) {
             var acquireStepCell = step.isOccupied();
             if(!acquireStepCell) acquiredCells++;
         }
-        if(acquiredCells == path.size()) {
-           moveCarThroughCells(path); 
+        if(acquiredCells == this.crossingPath.size()) {
+           moveCarThroughCells(this.crossingPath);
         }else {
-            releaseCarFromAcquiredCells(path);    
+            releaseCarFromAcquiredCells(this.crossingPath);
         }
     }
     
@@ -280,7 +280,7 @@ public class Vehicle extends Thread {
         return direction;
     }
 
-    private List<Cell> returnCrossingSteps(String destino){
+    private void returnCrossingSteps(String destino){
         //deve gravar em ordem
         crossingPath.clear();
         switch (destino){
@@ -397,7 +397,6 @@ public class Vehicle extends Thread {
                 }
                 break;
         }
-        return crossingPath;
     }
     private Cell getGridCellBasedOnCoordinates(int x, int y) {
         return grid.getGridCellAt(x,y);
