@@ -200,7 +200,7 @@ public class Vehicle extends Thread {
                 }
                 break;
             case Direction.ESTRADA_DIREITA: //significa que ele vem da esquerda, no cruzamento pode escolher entre subir, descer ou direita e é uma estrada
-                if(returnCellDirection(x+2,y+2) == Direction.ESTRADA_CIMA) {
+                if(returnCellDirection(x+2,y-2) == Direction.ESTRADA_CIMA) {
                     setCrossingUp(true);
                 }
                 if(returnCellDirection(x+3,y) == Direction.ESTRADA_DIREITA) {
@@ -219,7 +219,7 @@ public class Vehicle extends Thread {
                 if(returnCellDirection(x,y+3) == Direction.ESTRADA_BAIXO) {
                     setCrossingDown(true);
                 }
-                if(returnCellDirection(x+1,y+1) == Direction.ESTRADA_ESQUERDA) {
+                if(returnCellDirection(x-1,y+1) == Direction.ESTRADA_ESQUERDA) {
                     setCrossingLeft(true);
                 }
                 break;
