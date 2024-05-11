@@ -10,6 +10,9 @@ public class Vehicle extends Thread {
     private boolean isOutOfGrid = false;
     private Cell currentCell;
     private Grid grid;
+    List<String> caminho = new ArrayList<>();
+    List<String> crossingPossibilities = new ArrayList<>();
+    private String step1, step2, step3, destiny;
 
 
     public Vehicle(int x, int y, int speed) {
@@ -55,18 +58,40 @@ public class Vehicle extends Thread {
     public void run() {
         while (!isOutOfGrid) {
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1000);
                 move();
                 if (currentCell.isNextCellACrossing()){
                     verifyChoicePossibilities();
                     String destino = crossingChoice();// essa aqui é a escolha do carro apos chegar em um cruzamento
-                    defineCaminho(destino); //guardar as células que pertencem ao caminho escolhido
+                    followPath(destino);
                 }
                 System.out.println("movimentei!" + this.threadId());
             } catch (InterruptedException exception) {
                 System.out.println("deu ruim");
                 Thread.currentThread().interrupt();
             }
+        }
+    }
+
+    private void followPath(String destino) {
+        List<String> path = returnCrossingSteps(destino); //guardar as células que pertencem ao caminho escolhido
+        for (String step : path) {
+            String[] coordinates = step.split(",");
+            int nextX = Integer.parseInt(coordinates[0]);
+            int nextY = Integer.parseInt(coordinates[1]);
+            moveVehicleTo(nextX, nextY);
+            try {
+                Thread.sleep(3000); // Pausa para simular o movimento do veículo
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void moveVehicleTo(int nextX, int nextY) {
+        Cell nextCell = grid.getGridCellAt(nextX, nextY);
+        if (nextCell != null) {
+            moveCar(nextCell);
         }
     }
 
@@ -182,7 +207,6 @@ public class Vehicle extends Thread {
 
     //cria lista com possibilidades de escolha
     private List<String> getCrossingPossibilities() {
-        List<String> crossingPossibilities = new ArrayList<>();
         if (crossingUp) {
             crossingPossibilities.add("crossingUp");
         }
@@ -200,7 +224,7 @@ public class Vehicle extends Thread {
 
     //dentre as possibilidades que o carro pode ter, escolhe um aleatoriamente
     private String crossingChoice(){
-        List<String> crossingPossibilities = getCrossingPossibilities();
+        crossingPossibilities = getCrossingPossibilities();
         Random random = new Random();
         String randomlySelectedAttribute = crossingPossibilities.get(random.nextInt(crossingPossibilities.size()));
         return randomlySelectedAttribute;
@@ -212,12 +236,8 @@ public class Vehicle extends Thread {
         return direction;
     }
 
-    private void defineCaminho(String destino){
-        List<String> caminho = new ArrayList<>(); //deve gravar em ordem
-        String step1;
-        String step2;
-        String step3;
-        String destiny;
+    private List<String> returnCrossingSteps(String destino){
+        //deve gravar em ordem
         switch (destino){
             case "crossingUp":
                 switch (getCurrentCell().getDirection()){
@@ -228,7 +248,7 @@ public class Vehicle extends Thread {
                         caminho.add(step1);
                         caminho.add(step2);
                         caminho.add(destiny);
-                    break;
+                        break;
                     case Direction.ESTRADA_DIREITA:
                         step1   = (x+1) + "," + (y);
                         step2   = (x+2) + "," + (y);
@@ -246,7 +266,7 @@ public class Vehicle extends Thread {
                         caminho.add(destiny);
                         break;
                 }
-            break;
+                break;
             case "crossingRight":
                 switch (getCurrentCell().getDirection()){
                     case Direction.ESTRADA_CIMA:
@@ -274,7 +294,7 @@ public class Vehicle extends Thread {
                         caminho.add(destiny);
                         break;
                 }
-            break;
+                break;
             case "crossingDown":
                 switch (getCurrentCell().getDirection()){
                     case Direction.ESTRADA_DIREITA:
@@ -302,7 +322,7 @@ public class Vehicle extends Thread {
                         caminho.add(destiny);
                         break;
                 }
-            break;
+                break;
             case "crossingLeft":
                 switch (getCurrentCell().getDirection()){
                     case Direction.ESTRADA_CIMA:
@@ -330,8 +350,9 @@ public class Vehicle extends Thread {
                         caminho.add(destiny);
                         break;
                 }
-            break;
+                break;
         }
+        return caminho;
     }
 
 }
