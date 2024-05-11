@@ -1,6 +1,7 @@
 package com.udesc.dsd.model;
 
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 public class RoadCell extends Cell {
     private final Semaphore semaphore;
@@ -14,14 +15,19 @@ public class RoadCell extends Cell {
     }
     @Override
     public boolean tryEnter(Vehicle vehicle) {
-        var acquired = semaphore.tryAcquire();
-        if (acquired) {
-            if(this.getVehicle() == null || this.getVehicle().threadId() != vehicle.threadId()){
-                this.setVehicle(vehicle);
+        try{
+            var acquired = semaphore.tryAcquire(4000, TimeUnit.MILLISECONDS);
+            if (acquired) {
+                if(this.getVehicle() == null || this.getVehicle().threadId() != vehicle.threadId()){
+                    this.setVehicle(vehicle);
+                }
+                notifyCarEntered(vehicle);
             }
-            notifyCarEntered(vehicle);
+            return acquired;
+        }catch (InterruptedException exception) {
+            exception.printStackTrace();
+            return false;
         }
-        return acquired;
     }
     @Override
     public void releaseVehicle() {
