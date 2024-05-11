@@ -81,6 +81,7 @@ public class Vehicle extends Thread {
             try {
                 Thread.sleep(1000);
                 moveCarStraightForward();
+                Thread.sleep(1000);
                 if (currentCell.isNextCellACrossing()){
                     verifyCrossingChoicePossibilities();
                     String destino = crossingChoice();// essa aqui é a escolha do carro apos chegar em um cruzamento
@@ -111,11 +112,17 @@ public class Vehicle extends Thread {
     private void moveCarThroughCells(List<Cell> pathToMoveOn) {
         for(Cell cell : pathToMoveOn) {
             var oldCell = this.getCurrentCell();
+            cell.tryEnter(this);
             oldCell.releaseVehicle();
             this.setCurrentCell(cell);
-            cell.tryEnter(this);
             this.setX(cell.getPositionX());
             this.setY(cell.getPositionY());
+            try{
+                Thread.sleep(1000);
+            }catch (InterruptedException e) {
+                this.interrupt();
+                e.printStackTrace();
+            }
         }
     }
     
@@ -151,7 +158,13 @@ public class Vehicle extends Thread {
             }
 
         if (getCurrentCell().isExit()) {
-            removeCarFromGrid();
+            try{
+               Thread.sleep(2000);
+                removeCarFromGrid();
+            }catch (InterruptedException exception) {
+                this.interrupt();
+                exception.printStackTrace();
+            }
         }
     }
 
@@ -162,10 +175,10 @@ public class Vehicle extends Thread {
     private void moveCar(Cell nextCell) {
         var enterCell = nextCell.tryEnter(this);
         if (enterCell) {
-            setX(nextCell.getPositionX());
-            setY(nextCell.getPositionY());
             this.currentCell.releaseVehicle();
             this.setCurrentCell(nextCell);
+            setX(nextCell.getPositionX());
+            setY(nextCell.getPositionY());
         }
     }
 

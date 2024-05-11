@@ -25,6 +25,6 @@ public class GridView extends JFrame {
         setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        gridController.startSimulation();
+        gridController.start();
     }
 }
