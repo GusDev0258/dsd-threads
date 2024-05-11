@@ -79,9 +79,9 @@ public class Vehicle extends Thread {
     public void run() {
         while (!isOutOfGrid) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(300);
                 moveCarStraightForward();
-                Thread.sleep(1000);
+                Thread.sleep(300);
                 if (currentCell.isNextCellACrossing()){
                     verifyCrossingChoicePossibilities();
                     String destino = crossingChoice();// essa aqui é a escolha do carro apos chegar em um cruzamento
@@ -186,6 +186,7 @@ public class Vehicle extends Thread {
 
     //verifica quais caminhos existem ao final do cruzamento para que o carro escolha um aleatório
     private void verifyCrossingChoicePossibilities(){
+        resetCrossingPossibilities();
         switch (getCurrentCell().getDirection()) {
             case Direction.ESTRADA_CIMA: //significa que ele vem de baixo, no cruzamento pode escolher entre subir, esquerda ou direita
                 if(returnCellDirection(x,y-3) == Direction.ESTRADA_CIMA) { //valida se a célula acima do cruzamento existe e é uma estrada
@@ -221,6 +222,7 @@ public class Vehicle extends Thread {
                 }
                 if(returnCellDirection(x-1,y+1) == Direction.ESTRADA_ESQUERDA) {
                     setCrossingLeft(true);
+                    System.out.println(returnCellDirection(x-1,y+1));
                 }
                 break;
             case Direction.ESTRADA_ESQUERDA: //significa que ele vem da direita, no cruzamento pode escolher entre descer, esquerda ou subir
@@ -236,6 +238,13 @@ public class Vehicle extends Thread {
                 }
                 break;
         }
+    }
+
+    private void resetCrossingPossibilities(){
+        setCrossingUp(false);
+        setCrossingRight(false);
+        setCrossingLeft(false);
+        setCrossingDown(false);
     }
 
     private String crossingChoice(){
@@ -392,4 +401,5 @@ public class Vehicle extends Thread {
     private Cell getGridCellBasedOnCoordinates(int x, int y) {
         return grid.getGridCellAt(x,y);
     }
+
 }
