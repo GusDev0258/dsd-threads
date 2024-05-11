@@ -16,6 +16,7 @@ public class GridController extends Thread implements GridCarObserver {
     private int carQtd = 0;
 
     public GridController() {
+        grid.addObserver(this);
     }
 
     public void close() {
@@ -59,7 +60,6 @@ public class GridController extends Thread implements GridCarObserver {
     }
 
     public void startSimulation() throws InterruptedException{
-        grid.addObserver(this);
         populateCarsIntoTheGrid();
     }
 
