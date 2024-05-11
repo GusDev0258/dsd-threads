@@ -10,9 +10,13 @@ public class Vehicle extends Thread {
     private boolean isOutOfGrid = false;
     private Cell currentCell;
     private final Grid grid;
-    List<String> caminho = new ArrayList<>();
+    List<Point> caminho = new ArrayList<>();
     List<String> crossingPossibilities = new ArrayList<>();
-    private String step1, step2, step3, destiny;
+    private Point step1, step2, step3, destiny;
+    private static final String CROSS_POSSIBILITY_UP = "crossingUp";
+    private static final String CROSS_POSSIBILITY_DOWN = "crossingDown";
+    private static final String CROSS_POSSIBILITY_LEFT = "crossingLeft";
+    private static final String CROSS_POSSIBILITY_RIGHT = "crossingRight";
 
 
     public Vehicle(int x, int y, int speed, Grid grid) {
@@ -75,11 +79,10 @@ public class Vehicle extends Thread {
     }
 
     private void followPath(String destino) {
-        List<String> path = returnCrossingSteps(destino); //guardar as células que pertencem ao caminho escolhido
-        for (String step : path) {
-            String[] coordinates = step.split(",");
-            int nextX = Integer.parseInt(coordinates[0]);
-            int nextY = Integer.parseInt(coordinates[1]);
+        List<Point> path = returnCrossingSteps(destino); //guardar as células que pertencem ao caminho escolhido
+        for (Point step : path) {
+            int nextX = step.getPositionX();
+            int nextY = step.getPositionY();
             moveVehicleTo(nextX, nextY);
             try {
                 Thread.sleep(3000); // Pausa para simular o movimento do veículo
@@ -209,16 +212,16 @@ public class Vehicle extends Thread {
     //cria lista com possibilidades de escolha
     private List<String> getCrossingPossibilities() {
         if (crossingUp) {
-            crossingPossibilities.add("crossingUp");
+            crossingPossibilities.add(CROSS_POSSIBILITY_UP);
         }
         if (crossingRight) {
-            crossingPossibilities.add("crossingRight");
+            crossingPossibilities.add(CROSS_POSSIBILITY_RIGHT);
         }
         if (crossingDown) {
-            crossingPossibilities.add("crossingDown");
+            crossingPossibilities.add(CROSS_POSSIBILITY_DOWN);
         }
         if (crossingLeft) {
-            crossingPossibilities.add("crossingLeft");
+            crossingPossibilities.add(CROSS_POSSIBILITY_LEFT);
         }
         return crossingPossibilities;
     }
@@ -237,86 +240,58 @@ public class Vehicle extends Thread {
         return direction;
     }
 
-    private List<String> returnCrossingSteps(String destino){
+    private List<Point> returnCrossingSteps(String destino){
         //deve gravar em ordem
         switch (destino){
-            case "crossingUp":
+            case CROSS_POSSIBILITY_UP:
                 switch (getCurrentCell().getDirection()){
                     case Direction.ESTRADA_CIMA:
-                        step1   = (x) + "," + (y-1);
-                        step2   = (x) + "," + (y-2);
-                        destiny = (x) + "," + (y-3);
+                        step1 = new Point(x, y-1);
+                        step2 = new Point(step1.getPositionX(), y-2);
+                        destiny = new Point(step1.getPositionX(), y-3);
                         caminho.add(step1);
                         caminho.add(step2);
                         caminho.add(destiny);
                         break;
                     case Direction.ESTRADA_DIREITA:
-                        step1   = (x+1) + "," + (y);
-                        step2   = (x+2) + "," + (y);
-                        step3   = (x+2) + "," + (y-1);
-                        destiny = (x+2) + "," + (y-2);
+                        step1 = new Point(x+1, y);
+                        step2 = new Point(x+2, step1.getPositionY());
+                        step3 = new Point(step2.getPositionX(), y-1);
+                        destiny = new Point(step2.getPositionX(), y-2);
                         caminho.add(step1);
                         caminho.add(step2);
                         caminho.add(step3);
                         caminho.add(destiny);
                         break;
                     case Direction.ESTRADA_ESQUERDA:
-                        step1   = (x-1) + "," + (y);
-                        destiny = (x-1) + "," + (y-1);
+                        step1 = new Point(x-1, y);
+                        destiny = new Point(step1.getPositionX(), y-1);
                         caminho.add(step1);
                         caminho.add(destiny);
                         break;
                 }
                 break;
-            case "crossingRight":
+            case CROSS_POSSIBILITY_RIGHT:
                 switch (getCurrentCell().getDirection()){
                     case Direction.ESTRADA_CIMA:
-                        step1   = (x) + "," + (y-1);
-                        destiny = (x+1) + "," + (y-1);
+                        step1 = new Point(x, y-1);
+                        destiny = new Point(x+1, step1.getPositionY());
                         caminho.add(step1);
                         caminho.add(destiny);
                         break;
                     case Direction.ESTRADA_DIREITA:
-                        step1   = (x+1) + "," + (y);
-                        step2   = (x+2) + "," + (y);
-                        destiny = (x+3) + "," + (y);
+                        step1 = new Point(x+1, y);
+                        step2 = new Point(x+2, step1.getPositionY());
+                        destiny = new Point(x+3, step1.getPositionY());
                         caminho.add(step1);
                         caminho.add(step2);
                         caminho.add(destiny);
                         break;
                     case Direction.ESTRADA_BAIXO:
-                        step1   = (x) + "," + (y+1);
-                        step2   = (x) + "," + (y+2);
-                        step3   = (x+1) + "," + (y+2);
-                        destiny = (x+2) + "," + (y+2);
-                        caminho.add(step1);
-                        caminho.add(step2);
-                        caminho.add(step3);
-                        caminho.add(destiny);
-                        break;
-                }
-                break;
-            case "crossingDown":
-                switch (getCurrentCell().getDirection()){
-                    case Direction.ESTRADA_DIREITA:
-                        step1   = (x+1) + "," + (y);
-                        destiny = (x+1) + "," + (y+1);
-                        caminho.add(step1);
-                        caminho.add(destiny);
-                        break;
-                    case Direction.ESTRADA_BAIXO:
-                        step1   = (x) + "," + (y+1);
-                        step2   = (x) + "," + (y+2);
-                        destiny = (x) + "," + (y+3);
-                        caminho.add(step1);
-                        caminho.add(step2);
-                        caminho.add(destiny);
-                        break;
-                    case Direction.ESTRADA_ESQUERDA:
-                        step1   = (x-1) + "," + (y);
-                        step2   = (x-2) + "," + (y);
-                        step3   = (x-2) + "," + (y+1);
-                        destiny = (x-2) + "," + (y+2);
+                        step1 = new Point(x, y+1);
+                        step2 = new Point(step1.getPositionX(), y+2);
+                        step3 = new Point(x+1, step2.getPositionY());
+                        destiny = new Point(x+2, step2.getPositionY());
                         caminho.add(step1);
                         caminho.add(step2);
                         caminho.add(step3);
@@ -324,28 +299,56 @@ public class Vehicle extends Thread {
                         break;
                 }
                 break;
-            case "crossingLeft":
+            case CROSS_POSSIBILITY_DOWN:
+                switch (getCurrentCell().getDirection()){
+                    case Direction.ESTRADA_DIREITA:
+                        step1 = new Point(x+1, y);
+                        destiny = new Point(x+1,y+1);
+                        caminho.add(step1);
+                        caminho.add(destiny);
+                        break;
+                    case Direction.ESTRADA_BAIXO:
+                        step1 = new Point(x, y+1);
+                        step2 = new Point(step1.getPositionX(), y+2);
+                        destiny = new Point(step1.getPositionX(), y+3);
+                        caminho.add(step1);
+                        caminho.add(step2);
+                        caminho.add(destiny);
+                        break;
+                    case Direction.ESTRADA_ESQUERDA:
+                        step1 = new Point(x-1, y);
+                        step2 = new Point(x-2,step1.getPositionY());
+                        step3 = new Point(step2.getPositionX(), y+1);
+                        destiny = new Point(step2.getPositionX(), y+2);
+                        caminho.add(step1);
+                        caminho.add(step2);
+                        caminho.add(step3);
+                        caminho.add(destiny);
+                        break;
+                }
+                break;
+            case CROSS_POSSIBILITY_LEFT:
                 switch (getCurrentCell().getDirection()){
                     case Direction.ESTRADA_CIMA:
-                        step1   = (x) + "," + (y-1);
-                        step2   = (x) + "," + (y-2);
-                        step3   = (x-1) + "," + (y-2);
-                        destiny = (x-2) + "," + (y-2);
+                        step1 = new Point(x, y-1);
+                        step2 = new Point(step1.getPositionX(), y-2);
+                        step3 = new Point(x-1, step2.getPositionY());
+                        destiny = new Point(x-2, step2.getPositionY());
                         caminho.add(step1);
                         caminho.add(step2);
                         caminho.add(step3);
                         caminho.add(destiny);
                         break;
                     case Direction.ESTRADA_BAIXO:
-                        step1   = (x) + "," + (y+1);
-                        destiny = (x-1) + "," + (y+1);
+                        step1 = new Point(x, y+1);
+                        destiny = new Point(x-1, step1.getPositionY());
                         caminho.add(step1);
                         caminho.add(destiny);
                         break;
                     case Direction.ESTRADA_ESQUERDA:
-                        step1   = (x+1) + "," + (y);
-                        step2   = (x+2) + "," + (y);
-                        destiny = (x+3) + "," + (y);
+                        step1 = new Point(x+1, y);
+                        step2 = new Point(x+2, step1.getPositionY());
+                        destiny = new Point(x+3, step1.getPositionY());
                         caminho.add(step1);
                         caminho.add(step2);
                         caminho.add(destiny);
