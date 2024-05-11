@@ -217,7 +217,6 @@ public abstract class Cell  {
               }
           }
         }
-//        return !this.isCrossing() && this.getCrossingNeighbors().size() == 1 && ();
         return false;
     }
 }
