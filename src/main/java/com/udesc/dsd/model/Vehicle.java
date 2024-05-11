@@ -9,16 +9,17 @@ public class Vehicle extends Thread {
     private int speed;
     private boolean isOutOfGrid = false;
     private Cell currentCell;
-    private Grid grid;
+    private final Grid grid;
     List<String> caminho = new ArrayList<>();
     List<String> crossingPossibilities = new ArrayList<>();
     private String step1, step2, step3, destiny;
 
 
-    public Vehicle(int x, int y, int speed) {
+    public Vehicle(int x, int y, int speed, Grid grid) {
         this.x = x;
         this.y = y;
         this.speed = speed;
+        this.grid = grid;
     }
 
     public int getX() {
@@ -142,14 +143,14 @@ public class Vehicle extends Thread {
     private void verifyChoicePossibilities(){
         switch (getCurrentCell().getDirection()) {
             case Direction.ESTRADA_CIMA: //significa que ele vem de baixo, no cruzamento pode escolher entre subir, esquerda ou direita
-                if(returnCellDirection(x,y+3) == Direction.ESTRADA_CIMA) { //valida se a célula acima do cruzamento existe e é uma estrada
+                if(returnCellDirection(x,y-3) == Direction.ESTRADA_CIMA) { //valida se a célula acima do cruzamento existe e é uma estrada
                     setCrossingUp(true);
                 }
-                if(returnCellDirection(x+1,y+1) == Direction.ESTRADA_DIREITA) { //valida se a célula para a direita do cruzamento existe e é uma estrada
+                if(returnCellDirection(x+1,y-1) == Direction.ESTRADA_DIREITA) { //valida se a célula para a direita do cruzamento existe e é uma estrada
                     setCrossingRight(true);
                 }
                 setCrossingDown(false);
-                if(returnCellDirection(x-2,y+2) == Direction.ESTRADA_ESQUERDA) { //valida se a célula para a esquerda do cruzamento existe e é uma estrada
+                if(returnCellDirection(x-2,y-2) == Direction.ESTRADA_ESQUERDA) { //valida se a célula para a esquerda do cruzamento existe e é uma estrada
                     setCrossingLeft(true);
                 }
                 break;
@@ -160,29 +161,29 @@ public class Vehicle extends Thread {
                 if(returnCellDirection(x+3,y) == Direction.ESTRADA_DIREITA) {
                     setCrossingRight(true);
                 }
-                if(returnCellDirection(x+1,y-1) == Direction.ESTRADA_BAIXO) {
+                if(returnCellDirection(x+1,y+1) == Direction.ESTRADA_BAIXO) {
                     setCrossingDown(true);
                 }
                 setCrossingLeft(false);
                 break;
             case Direction.ESTRADA_BAIXO: //significa que ele vem de cima, no cruzamento pode escolher entre descer, esquerda ou direita
                 setCrossingUp(false);
-                if(returnCellDirection(x+2,y-2) == Direction.ESTRADA_DIREITA) {
+                if(returnCellDirection(x+2,y+2) == Direction.ESTRADA_DIREITA) {
                     setCrossingRight(true);
                 }
-                if(returnCellDirection(x,y-3) == Direction.ESTRADA_BAIXO) {
+                if(returnCellDirection(x,y+3) == Direction.ESTRADA_BAIXO) {
                     setCrossingDown(true);
                 }
-                if(returnCellDirection(x-1,y-1) == Direction.ESTRADA_ESQUERDA) {
+                if(returnCellDirection(x+1,y+1) == Direction.ESTRADA_ESQUERDA) {
                     setCrossingLeft(true);
                 }
                 break;
             case Direction.ESTRADA_ESQUERDA: //significa que ele vem da direita, no cruzamento pode escolher entre descer, esquerda ou subir
-                if(returnCellDirection(x-1,y+1) == Direction.ESTRADA_CIMA) {
+                if(returnCellDirection(x-1,y-1) == Direction.ESTRADA_CIMA) {
                     setCrossingUp(true);
                 }
                 setCrossingRight(false);
-                if(returnCellDirection(x-2,y-2) == Direction.ESTRADA_BAIXO) {
+                if(returnCellDirection(x-2,y+2) == Direction.ESTRADA_BAIXO) {
                     setCrossingDown(true);
                 }
                 if(returnCellDirection(x-3,y) == Direction.ESTRADA_ESQUERDA) {
@@ -242,9 +243,9 @@ public class Vehicle extends Thread {
             case "crossingUp":
                 switch (getCurrentCell().getDirection()){
                     case Direction.ESTRADA_CIMA:
-                        step1   = (x) + "," + (y+1);
-                        step2   = (x) + "," + (y+2);
-                        destiny = (x) + "," + (y+3);
+                        step1   = (x) + "," + (y-1);
+                        step2   = (x) + "," + (y-2);
+                        destiny = (x) + "," + (y-3);
                         caminho.add(step1);
                         caminho.add(step2);
                         caminho.add(destiny);
@@ -252,8 +253,8 @@ public class Vehicle extends Thread {
                     case Direction.ESTRADA_DIREITA:
                         step1   = (x+1) + "," + (y);
                         step2   = (x+2) + "," + (y);
-                        step3   = (x+2) + "," + (y+1);
-                        destiny = (x+2) + "," + (y+2);
+                        step3   = (x+2) + "," + (y-1);
+                        destiny = (x+2) + "," + (y-2);
                         caminho.add(step1);
                         caminho.add(step2);
                         caminho.add(step3);
@@ -261,7 +262,7 @@ public class Vehicle extends Thread {
                         break;
                     case Direction.ESTRADA_ESQUERDA:
                         step1   = (x-1) + "," + (y);
-                        destiny = (x-1) + "," + (y+1);
+                        destiny = (x-1) + "," + (y-1);
                         caminho.add(step1);
                         caminho.add(destiny);
                         break;
@@ -270,8 +271,8 @@ public class Vehicle extends Thread {
             case "crossingRight":
                 switch (getCurrentCell().getDirection()){
                     case Direction.ESTRADA_CIMA:
-                        step1   = (x) + "," + (y+1);
-                        destiny = (x+1) + "," + (y+1);
+                        step1   = (x) + "," + (y-1);
+                        destiny = (x+1) + "," + (y-1);
                         caminho.add(step1);
                         caminho.add(destiny);
                         break;
@@ -284,10 +285,10 @@ public class Vehicle extends Thread {
                         caminho.add(destiny);
                         break;
                     case Direction.ESTRADA_BAIXO:
-                        step1   = (x) + "," + (y-1);
-                        step2   = (x) + "," + (y-2);
-                        step3   = (x+1) + "," + (y-2);
-                        destiny = (x+2) + "," + (y-2);
+                        step1   = (x) + "," + (y+1);
+                        step2   = (x) + "," + (y+2);
+                        step3   = (x+1) + "," + (y+2);
+                        destiny = (x+2) + "," + (y+2);
                         caminho.add(step1);
                         caminho.add(step2);
                         caminho.add(step3);
@@ -299,14 +300,14 @@ public class Vehicle extends Thread {
                 switch (getCurrentCell().getDirection()){
                     case Direction.ESTRADA_DIREITA:
                         step1   = (x+1) + "," + (y);
-                        destiny = (x+1) + "," + (y-1);
+                        destiny = (x+1) + "," + (y+1);
                         caminho.add(step1);
                         caminho.add(destiny);
                         break;
                     case Direction.ESTRADA_BAIXO:
-                        step1   = (x) + "," + (y-1);
-                        step2   = (x) + "," + (y-2);
-                        destiny = (x) + "," + (y-3);
+                        step1   = (x) + "," + (y+1);
+                        step2   = (x) + "," + (y+2);
+                        destiny = (x) + "," + (y+3);
                         caminho.add(step1);
                         caminho.add(step2);
                         caminho.add(destiny);
@@ -314,8 +315,8 @@ public class Vehicle extends Thread {
                     case Direction.ESTRADA_ESQUERDA:
                         step1   = (x-1) + "," + (y);
                         step2   = (x-2) + "," + (y);
-                        step3   = (x-2) + "," + (y-1);
-                        destiny = (x-2) + "," + (y-2);
+                        step3   = (x-2) + "," + (y+1);
+                        destiny = (x-2) + "," + (y+2);
                         caminho.add(step1);
                         caminho.add(step2);
                         caminho.add(step3);
@@ -326,25 +327,25 @@ public class Vehicle extends Thread {
             case "crossingLeft":
                 switch (getCurrentCell().getDirection()){
                     case Direction.ESTRADA_CIMA:
-                        step1   = (x) + "," + (y+1);
-                        step2   = (x) + "," + (y+2);
-                        step3   = (x-1) + "," + (y+2);
-                        destiny = (x-2) + "," + (y+2);
+                        step1   = (x) + "," + (y-1);
+                        step2   = (x) + "," + (y-2);
+                        step3   = (x-1) + "," + (y-2);
+                        destiny = (x-2) + "," + (y-2);
                         caminho.add(step1);
                         caminho.add(step2);
                         caminho.add(step3);
                         caminho.add(destiny);
                         break;
                     case Direction.ESTRADA_BAIXO:
-                        step1   = (x) + "," + (y-1);
-                        destiny = (x-1) + "," + (y-1);
+                        step1   = (x) + "," + (y+1);
+                        destiny = (x-1) + "," + (y+1);
                         caminho.add(step1);
                         caminho.add(destiny);
                         break;
                     case Direction.ESTRADA_ESQUERDA:
-                        step1   = (x-1) + "," + (y);
-                        step2   = (x-2) + "," + (y);
-                        destiny = (x-3) + "," + (y);
+                        step1   = (x+1) + "," + (y);
+                        step2   = (x+2) + "," + (y);
+                        destiny = (x+3) + "," + (y);
                         caminho.add(step1);
                         caminho.add(step2);
                         caminho.add(destiny);

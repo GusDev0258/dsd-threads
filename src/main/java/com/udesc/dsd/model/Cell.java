@@ -190,6 +190,34 @@ public abstract class Cell  {
 
     //validacao para dizer se a célula está antes de em um cruzamento
     public boolean isNextCellACrossing(){
-        return !this.isCrossing() && this.getCrossingNeighbors().size() == 1;
+        if(!this.isCrossing() && this.getCrossingNeighbors().size() == 1)  {
+          switch(direction) {
+              case Direction.ESTRADA_CIMA -> {
+                  if(this.upNeighbor.isCrossing()){
+                      return true;
+                  }
+              }
+              case Direction.ESTRADA_DIREITA -> {
+                  if(this.rightNeighbor.isCrossing()) {
+                      return true;
+                  }
+              }
+              case Direction.ESTRADA_BAIXO -> {
+                  if(this.downNeighbor.isCrossing()){
+                      return true;
+                  }
+              }
+              case Direction.ESTRADA_ESQUERDA -> {
+                  if(this.leftNeighbor.isCrossing()) {
+                      return true;
+                  }
+              }
+              default -> {
+                  break;
+              }
+          }
+        }
+//        return !this.isCrossing() && this.getCrossingNeighbors().size() == 1 && ();
+        return false;
     }
 }

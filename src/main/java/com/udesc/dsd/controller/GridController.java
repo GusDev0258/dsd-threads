@@ -71,7 +71,7 @@ public class GridController implements GridCarObserver, Runnable {
             Cell entrance = findEmptyEntrance();
             if (entrance != null ) {
                 Vehicle car = VehicleFactory.createVehicle(new Point(entrance.getPositionX(), entrance.getPositionY())
-                        , entrance);
+                        , entrance, grid);
                 entrance.tryEnter(car);
                 car.start();
                 grid.notifyVehicleEnter(car);
