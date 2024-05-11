@@ -248,6 +248,7 @@ public class Vehicle extends Thread {
     }
 
     private String crossingChoice(){
+        crossingPossibilities.clear();
         crossingPossibilities = getCrossingPossibilities();
         Random random = new Random();
         String randomlySelectedAttribute = crossingPossibilities.get(random.nextInt(0, crossingPossibilities.size()));
