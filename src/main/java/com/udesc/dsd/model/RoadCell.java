@@ -18,8 +18,8 @@ public class RoadCell extends Cell {
         if (acquired) {
             if(this.getVehicle() == null || this.getVehicle().threadId() != vehicle.threadId()){
                 this.setVehicle(vehicle);
-                notifyCarEntered(vehicle);
             }
+            notifyCarEntered(vehicle);
         }
         return acquired;
     }

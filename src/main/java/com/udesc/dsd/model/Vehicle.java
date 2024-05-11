@@ -10,9 +10,9 @@ public class Vehicle extends Thread {
     private boolean isOutOfGrid = false;
     private Cell currentCell;
     private final Grid grid;
-    List<Point> caminho = new ArrayList<>();
+    List<Cell> crossingPath = new ArrayList<>();
     List<String> crossingPossibilities = new ArrayList<>();
-    private Point step1, step2, step3, destiny;
+    private Cell step1, step2, step3, destiny;
     private static final String CROSS_POSSIBILITY_UP = "crossingUp";
     private static final String CROSS_POSSIBILITY_DOWN = "crossingDown";
     private static final String CROSS_POSSIBILITY_LEFT = "crossingLeft";
@@ -53,7 +53,6 @@ public class Vehicle extends Thread {
 
     public void setCurrentCell(Cell cell) {
         this.currentCell = cell;
-        this.currentCell.setVehicle(this);
     }
 
     private void setCrossingUp(boolean crossingUp){
@@ -81,7 +80,7 @@ public class Vehicle extends Thread {
         while (!isOutOfGrid) {
             try {
                 Thread.sleep(1000);
-                move();
+                moveCarStraightForward();
                 if (currentCell.isNextCellACrossing()){
                     verifyCrossingChoicePossibilities();
                     String destino = crossingChoice();// essa aqui é a escolha do carro apos chegar em um cruzamento
@@ -96,15 +95,34 @@ public class Vehicle extends Thread {
     }
 
     private void followPath(String destino) {
-        List<Point> path = returnCrossingSteps(destino); //guardar as células que pertencem ao caminho escolhido
-        for (Point step : path) {
-            int nextX = step.getPositionX();
-            int nextY = step.getPositionY();
-            moveVehicleTo(nextX, nextY);
-            try {
-                Thread.sleep(3000); // Pausa para simular o movimento do veículo
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        List<Cell> path = returnCrossingSteps(destino); //guardar as células que pertencem ao caminho escolhido
+        int acquiredCells = 0;
+        for (Cell step : path) {
+            var acquireStepCell = step.isOccupied();
+            if(!acquireStepCell) acquiredCells++;
+        }
+        if(acquiredCells == path.size()) {
+           moveCarThroughCells(path); 
+        }else {
+            releaseCarFromAcquiredCells(path);    
+        }
+    }
+    
+    private void moveCarThroughCells(List<Cell> pathToMoveOn) {
+        for(Cell cell : pathToMoveOn) {
+            var oldCell = this.getCurrentCell();
+            oldCell.releaseVehicle();
+            this.setCurrentCell(cell);
+            cell.tryEnter(this);
+            this.setX(cell.getPositionX());
+            this.setY(cell.getPositionY());
+        }
+    }
+    
+    private void releaseCarFromAcquiredCells(List<Cell> cellsToLeave) { 
+        for (Cell cell : cellsToLeave) {
+            if(cell.getVehicle() != null && cell.getVehicle().threadId() == this.threadId()) {
+                cell.releaseVehicle();
             }
         }
     }
@@ -116,7 +134,7 @@ public class Vehicle extends Thread {
         }
     }
 
-    public void move() {
+    public void moveCarStraightForward() {
             Cell nextCell = null;
             switch (getCurrentCell().getDirection()) {
                 case Direction.ESTRADA_CIMA:
@@ -239,123 +257,125 @@ public class Vehicle extends Thread {
         return direction;
     }
 
-    private List<Point> returnCrossingSteps(String destino){
+    private List<Cell> returnCrossingSteps(String destino){
         //deve gravar em ordem
         switch (destino){
             case CROSS_POSSIBILITY_UP:
                 switch (getCurrentCell().getDirection()){
                     case Direction.ESTRADA_CIMA:
-                        step1 = new Point(x, y-1);
-                        step2 = new Point(step1.getPositionX(), y-2);
-                        destiny = new Point(step1.getPositionX(), y-3);
-                        caminho.add(step1);
-                        caminho.add(step2);
-                        caminho.add(destiny);
+                        step1 = getGridCellBasedOnCoordinates(x, y-1);
+                        step2 = getGridCellBasedOnCoordinates(x, y-2);
+                        destiny = getGridCellBasedOnCoordinates(x, y-3);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_DIREITA:
-                        step1 = new Point(x+1, y);
-                        step2 = new Point(x+2, step1.getPositionY());
-                        step3 = new Point(step2.getPositionX(), y-1);
-                        destiny = new Point(step2.getPositionX(), y-2);
-                        caminho.add(step1);
-                        caminho.add(step2);
-                        caminho.add(step3);
-                        caminho.add(destiny);
+                        step1 = getGridCellBasedOnCoordinates(x+1,y);
+                        step2 = getGridCellBasedOnCoordinates(x+2, y);
+                        step3 = getGridCellBasedOnCoordinates(x+2, y-1);
+                        destiny = getGridCellBasedOnCoordinates(x+2, y-2);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(step3);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_ESQUERDA:
-                        step1 = new Point(x-1, y);
-                        destiny = new Point(step1.getPositionX(), y-1);
-                        caminho.add(step1);
-                        caminho.add(destiny);
+                        step1 = getGridCellBasedOnCoordinates(x-1, y);
+                        destiny = getGridCellBasedOnCoordinates(x-1,y-1);
+                        crossingPath.add(step1);
+                        crossingPath.add(destiny);
                         break;
                 }
                 break;
             case CROSS_POSSIBILITY_RIGHT:
                 switch (getCurrentCell().getDirection()){
                     case Direction.ESTRADA_CIMA:
-                        step1 = new Point(x, y-1);
-                        destiny = new Point(x+1, step1.getPositionY());
-                        caminho.add(step1);
-                        caminho.add(destiny);
+                        step1 = getGridCellBasedOnCoordinates(x, y-1);
+                        destiny = getGridCellBasedOnCoordinates(x+1, y-1);
+                        crossingPath.add(step1);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_DIREITA:
-                        step1 = new Point(x+1, y);
-                        step2 = new Point(x+2, step1.getPositionY());
-                        destiny = new Point(x+3, step1.getPositionY());
-                        caminho.add(step1);
-                        caminho.add(step2);
-                        caminho.add(destiny);
+                        step1 = getGridCellBasedOnCoordinates(x+1, y);
+                        step2 = getGridCellBasedOnCoordinates(x+2, y);
+                        destiny = getGridCellBasedOnCoordinates(x+3, y);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_BAIXO:
-                        step1 = new Point(x, y+1);
-                        step2 = new Point(step1.getPositionX(), y+2);
-                        step3 = new Point(x+1, step2.getPositionY());
-                        destiny = new Point(x+2, step2.getPositionY());
-                        caminho.add(step1);
-                        caminho.add(step2);
-                        caminho.add(step3);
-                        caminho.add(destiny);
+                        step1 = getGridCellBasedOnCoordinates(x, y+1);
+                        step2 = getGridCellBasedOnCoordinates(x, y+2);
+                        step3 = getGridCellBasedOnCoordinates(x+1,y+2);
+                        destiny = getGridCellBasedOnCoordinates(x+2, y+2);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(step3);
+                        crossingPath.add(destiny);
                         break;
                 }
                 break;
             case CROSS_POSSIBILITY_DOWN:
                 switch (getCurrentCell().getDirection()){
                     case Direction.ESTRADA_DIREITA:
-                        step1 = new Point(x+1, y);
-                        destiny = new Point(x+1,y+1);
-                        caminho.add(step1);
-                        caminho.add(destiny);
+                        step1 = getGridCellBasedOnCoordinates(x+1, y);
+                        destiny = getGridCellBasedOnCoordinates(x+1, y+1);
+                        crossingPath.add(step1);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_BAIXO:
-                        step1 = new Point(x, y+1);
-                        step2 = new Point(step1.getPositionX(), y+2);
-                        destiny = new Point(step1.getPositionX(), y+3);
-                        caminho.add(step1);
-                        caminho.add(step2);
-                        caminho.add(destiny);
+                        step1 = getGridCellBasedOnCoordinates(x, y+1);
+                        step2 = getGridCellBasedOnCoordinates(x, y+2);
+                        destiny = getGridCellBasedOnCoordinates(x, y+3);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_ESQUERDA:
-                        step1 = new Point(x-1, y);
-                        step2 = new Point(x-2,step1.getPositionY());
-                        step3 = new Point(step2.getPositionX(), y+1);
-                        destiny = new Point(step2.getPositionX(), y+2);
-                        caminho.add(step1);
-                        caminho.add(step2);
-                        caminho.add(step3);
-                        caminho.add(destiny);
+                        step1 = getGridCellBasedOnCoordinates(x-1, y);
+                        step2 = getGridCellBasedOnCoordinates(x-2, y);
+                        step3 = getGridCellBasedOnCoordinates(x-2, y+1);
+                        destiny = getGridCellBasedOnCoordinates(x-2, y+2);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(step3);
+                        crossingPath.add(destiny);
                         break;
                 }
                 break;
             case CROSS_POSSIBILITY_LEFT:
                 switch (getCurrentCell().getDirection()){
                     case Direction.ESTRADA_CIMA:
-                        step1 = new Point(x, y-1);
-                        step2 = new Point(step1.getPositionX(), y-2);
-                        step3 = new Point(x-1, step2.getPositionY());
-                        destiny = new Point(x-2, step2.getPositionY());
-                        caminho.add(step1);
-                        caminho.add(step2);
-                        caminho.add(step3);
-                        caminho.add(destiny);
+                        step1 = getGridCellBasedOnCoordinates(x, y-1);
+                        step2 = getGridCellBasedOnCoordinates(x, y-2);
+                        step3 = getGridCellBasedOnCoordinates(x-1, y-2);
+                        destiny = getGridCellBasedOnCoordinates(x-2, y-2);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(step3);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_BAIXO:
-                        step1 = new Point(x, y+1);
-                        destiny = new Point(x-1, step1.getPositionY());
-                        caminho.add(step1);
-                        caminho.add(destiny);
+                        step1 = getGridCellBasedOnCoordinates(x, y+1);
+                        destiny = getGridCellBasedOnCoordinates(x-1, y+1);
+                        crossingPath.add(step1);
+                        crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_ESQUERDA:
-                        step1 = new Point(x+1, y);
-                        step2 = new Point(x+2, step1.getPositionY());
-                        destiny = new Point(x+3, step1.getPositionY());
-                        caminho.add(step1);
-                        caminho.add(step2);
-                        caminho.add(destiny);
+                        step1 = getGridCellBasedOnCoordinates(x+1, y);
+                        step2 = getGridCellBasedOnCoordinates(x+2, y);
+                        destiny = getGridCellBasedOnCoordinates(x+3, y);
+                        crossingPath.add(step1);
+                        crossingPath.add(step2);
+                        crossingPath.add(destiny);
                         break;
                 }
                 break;
         }
-        return caminho;
+        return crossingPath;
     }
-
+    private Cell getGridCellBasedOnCoordinates(int x, int y) {
+        return grid.getGridCellAt(x,y);
+    }
 }
