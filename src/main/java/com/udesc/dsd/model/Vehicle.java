@@ -272,6 +272,7 @@ public class Vehicle extends Thread {
 
     private List<Cell> returnCrossingSteps(String destino){
         //deve gravar em ordem
+        crossingPath.clear();
         switch (destino){
             case CROSS_POSSIBILITY_UP:
                 switch (getCurrentCell().getDirection()){
