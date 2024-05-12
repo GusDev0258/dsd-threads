@@ -13,13 +13,13 @@ public class Vehicle extends Thread {
     private static final String CROSS_POSSIBILITY_RIGHT = "crossingRight";
     private final Grid grid;
     private final Random random = new Random();
-    List<Cell> crossingPath = new ArrayList<>();
+    List<RoadCell> crossingPath = new ArrayList<>();
     List<String> crossingPossibilities = new ArrayList<>();
     private int x, y;
     private int speed;
     private boolean isOutOfGrid = false;
-    private Cell currentCell;
-    private Cell step1, step2, step3, destiny;
+    private RoadCell currentCell;
+    private RoadCell step1, step2, step3, destiny;
     //O cruzamento poderá ter no máximo 4 possibilidades:
     private boolean crossingUp;
     private boolean crossingRight;
@@ -77,11 +77,11 @@ public class Vehicle extends Thread {
         this.y = y;
     }
 
-    public Cell getCurrentCell() {
+    public RoadCell getCurrentCell() {
         return this.currentCell;
     }
 
-    public void setCurrentCell(Cell cell) {
+    public void setCurrentCell(RoadCell cell) {
         this.currentCell = cell;
         this.setX(this.getCurrentCell().getPositionX());
         this.setY(this.getCurrentCell().getPositionY());
@@ -129,20 +129,22 @@ public class Vehicle extends Thread {
                 }
                 System.out.println("movimentei!" + this.threadId());
             } catch (InterruptedException exception) {
-                System.out.println("deu ruim");
+                System.out.println("Encerrado");
+                this.removeCarFromGrid();
                 Thread.currentThread().interrupt();
+                exception.printStackTrace();
             }
         }
     }
 
     private boolean isAllPathFree(String destino) {
         returnCrossingSteps(destino);
-        List<Cell> acquiredCells = new ArrayList<>();
-        for (Cell step : this.crossingPath) {
+        List<RoadCell> acquiredCells = new ArrayList<>();
+        for (RoadCell step : this.crossingPath) {
             if (step.acquireCell()) {
                 acquiredCells.add(step);
             } else {
-                for (Cell cell : acquiredCells) {
+                for (RoadCell cell : acquiredCells) {
                     cell.releaseCell();
                 }
                 return false;
@@ -152,7 +154,7 @@ public class Vehicle extends Thread {
     }
 
     private void followPath() {
-        for (Cell step : this.crossingPath) {
+        for (RoadCell step : this.crossingPath) {
             if (!step.isOccupied()) {
                 step.tryEnter(this);
             } else if (step.isOccupied() && step.getVehicle() == null) {
@@ -163,15 +165,16 @@ public class Vehicle extends Thread {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
-                this.interrupt();
+                this.removeCarFromGrid();
+                Thread.currentThread().interrupt();
                 e.printStackTrace();
             }
         }
         this.releaseCarFromAcquiredCrossingCells(this.crossingPath);
     }
 
-    private void moveCarThroughCells(List<Cell> pathToMoveOn) {
-        for (Cell cell : pathToMoveOn) {
+    private void moveCarThroughCells(List<RoadCell> pathToMoveOn) {
+        for (RoadCell cell : pathToMoveOn) {
             var oldCell = this.getCurrentCell();
             cell.tryEnter(this);
             oldCell.releaseVehicle();
@@ -181,14 +184,15 @@ public class Vehicle extends Thread {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                this.interrupt();
+                this.removeCarFromGrid();
+                Thread.currentThread().interrupt();
                 e.printStackTrace();
             }
         }
     }
 
-    private void releaseCarFromAcquiredCrossingCells(List<Cell> cellsToLeave) {
-        for (Cell cell : cellsToLeave) {
+    private void releaseCarFromAcquiredCrossingCells(List<RoadCell> cellsToLeave) {
+        for (RoadCell cell : cellsToLeave) {
             if (cell.isCrossing()) {
                 cell.releaseVehicle();
             }
@@ -196,14 +200,14 @@ public class Vehicle extends Thread {
     }
 
     private void moveVehicleTo(int nextX, int nextY) {
-        Cell nextCell = grid.getGridCellAt(nextX, nextY);
+        RoadCell nextCell = grid.getGridCellAt(nextX, nextY);
         if (nextCell != null && !nextCell.isOccupied()) {
             moveCar(nextCell);
         }
     }
 
     public void moveCarStraightForward() {
-        Cell nextCell = null;
+        RoadCell nextCell = null;
         switch (getCurrentCell().getDirection()) {
             case Direction.ESTRADA_CIMA:
             case Direction.ESTRADA_DIREITA:
@@ -223,17 +227,18 @@ public class Vehicle extends Thread {
                 Thread.sleep(1000);
                 removeCarFromGrid();
             } catch (InterruptedException exception) {
-                this.interrupt();
+                this.removeCarFromGrid();
+                Thread.currentThread().interrupt();
                 exception.printStackTrace();
             }
         }
     }
 
-    private Cell chooseCellToMoveVehicleForward() {
+    private RoadCell chooseCellToMoveVehicleForward() {
         return currentCell.getValidAdjacentCell(getCurrentCell().getDirection());
     }
 
-    private void moveCar(Cell nextCell) {
+    private void moveCar(RoadCell nextCell) {
         boolean enterCell = false;
         while (!enterCell) {
             enterCell = nextCell.tryEnter(this);
@@ -241,7 +246,9 @@ public class Vehicle extends Thread {
                 try {
                     Thread.sleep(speed);
                 } catch (InterruptedException e) {
+                    this.removeCarFromGrid();
                     Thread.currentThread().interrupt();
+                    e.printStackTrace();
                 }
             } else {
                 this.currentCell.releaseVehicle();
@@ -344,12 +351,12 @@ public class Vehicle extends Thread {
     //dentre as possibilidades que o carro pode ter, escolhe um aleatoriamente
 
     private int returnCellDirection(int x, int y) {
-        Cell cell = grid.getGridCellAt(x, y);
+        RoadCell cell = grid.getGridCellAt(x, y);
         int direction = cell.getDirection();
         return direction;
     }
 
-    private List<Cell> returnCrossingSteps(String destino) {
+    private List<RoadCell> returnCrossingSteps(String destino) {
         //deve gravar em ordem
         crossingPath.clear();
         switch (destino) {
@@ -469,7 +476,7 @@ public class Vehicle extends Thread {
         return crossingPath;
     }
 
-    private Cell getGridCellBasedOnCoordinates(int x, int y) {
+    private RoadCell getGridCellBasedOnCoordinates(int x, int y) {
         return grid.getGridCellAt(x, y);
     }
 

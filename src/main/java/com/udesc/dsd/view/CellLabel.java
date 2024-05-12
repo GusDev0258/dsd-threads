@@ -1,7 +1,7 @@
 package com.udesc.dsd.view;
 
 import com.udesc.dsd.controller.GridController;
-import com.udesc.dsd.model.Cell;
+import com.udesc.dsd.model.RoadCell;
 import com.udesc.dsd.model.Vehicle;
 import com.udesc.dsd.model.observer.CellObserver;
 
@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class CellLabel extends JLabel implements CellObserver {
-    private final Cell labelCell;
+    private final RoadCell labelCell;
 
     public CellLabel(GridController controller, int y, int x) {
         this.labelCell = controller.getGrid().getGridCellAt(x, y);
@@ -32,7 +32,7 @@ public class CellLabel extends JLabel implements CellObserver {
     }
 
     @Override
-    public void onCarEntered(Vehicle vehicle, Cell cell) {
+    public void onCarEntered(Vehicle vehicle, RoadCell cell) {
         if (cell.getPositionX() == this.labelCell.getPositionX() && cell.getPositionY() == this.labelCell.getPositionY() && cell.isOccupied() && cell.getVehicle() != null) {
             setLabelIcon(vehicle.getCarImage());
             validate();
@@ -41,7 +41,7 @@ public class CellLabel extends JLabel implements CellObserver {
     }
 
     @Override
-    public void onCarLeft(Vehicle vehicle, Cell cell) {
+    public void onCarLeft(Vehicle vehicle, RoadCell cell) {
         if (cell.getPositionX() == this.labelCell.getPositionX() && cell.getPositionY() == this.labelCell.getPositionY()) {
             setLabelIcon(cell.getCellImagePath());
         }

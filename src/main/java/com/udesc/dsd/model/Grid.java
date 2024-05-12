@@ -11,9 +11,9 @@ import java.util.Map;
 
 public class Grid {
     private static Grid instance = null;
-    private List<Cell> entrances = new ArrayList<>();
-    private List<Cell> exits = new ArrayList<>();
-    private Map<Point, Cell> cells = new HashMap<>();
+    private List<RoadCell> entrances = new ArrayList<>();
+    private List<RoadCell> exits = new ArrayList<>();
+    private Map<Point, RoadCell> cells = new HashMap<>();
     private int rowCount;
     private int columCount;
     private int[][] gridMap;
@@ -64,7 +64,7 @@ public class Grid {
                 int x = point.getPositionX();
                 int y = point.getPositionY();
                 var currentCell = cells.get(point);
-                Cell neighborCell;
+                RoadCell neighborCell;
                 //Cima
                 if (y > 0 && gridMap[y - 1][x] != Direction.NADA) {
                     neighborCell = cells.get(new Point(x, y - 1));
@@ -94,7 +94,7 @@ public class Grid {
     }
 
 
-    private void checkAndMakeCellIsEntranceOrExit(Cell cell, int y, int x) {
+    private void checkAndMakeCellIsEntranceOrExit(RoadCell cell, int y, int x) {
         var isCellEntrance = EntranceStrategy.execute(x, y, cell.getDirection(), getRowCount(), getColumCount());
         if (isCellEntrance == EntranceStrategy.ENTRANCE) {
             cell.setEntrance(true);
@@ -106,40 +106,40 @@ public class Grid {
     }
 
 
-    public Cell getGridCellAt(int x, int y) {
+    public RoadCell getGridCellAt(int x, int y) {
         if (cells.size() > 0) {
             return cells.get(new Point(x, y));
         }
         return null;
     }
 
-    public List<Cell> getEntrances() {
+    public List<RoadCell> getEntrances() {
         return entrances;
     }
 
-    public List<Cell> getExits() {
+    public List<RoadCell> getExits() {
         return exits;
     }
 
-    public Map<Point, Cell> getCellsMap() {
+    public Map<Point, RoadCell> getCellsMap() {
         return cells;
     }
 
-    public List<Cell> getCells() {
+    public List<RoadCell> getCells() {
         return cells.values().stream().toList();
     }
 
-    public void addCell(Point coordinates, Cell cell) {
+    public void addCell(Point coordinates, RoadCell cell) {
         this.cells.put(coordinates, cell);
     }
 
-    public void addEntrance(Cell cell) {
+    public void addEntrance(RoadCell cell) {
         if (cell.isEntrance()) {
             this.entrances.add(cell);
         }
     }
 
-    public void addExit(Cell cell) {
+    public void addExit(RoadCell cell) {
         if (cell.isExit()) {
             this.exits.add(cell);
         }

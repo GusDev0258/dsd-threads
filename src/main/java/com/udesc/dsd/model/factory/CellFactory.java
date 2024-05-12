@@ -1,7 +1,7 @@
 package com.udesc.dsd.model.factory;
 
-import com.udesc.dsd.model.Cell;
+import com.udesc.dsd.model.RoadCell;
 
 public interface CellFactory {
-    public Cell createCell(int positionX, int positionY, int direction);
+    public RoadCell createCell(int positionX, int positionY, int direction);
 }

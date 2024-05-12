@@ -68,7 +68,7 @@ public class GridController extends Thread implements GridCarObserver, CarObserv
     public void populateCarsIntoTheGrid() {
         try {
             while (carQtd < settings.getCarQuantity() && settings.isSimulationRunning()) {
-                Cell entrance = findEmptyEntrance();
+                RoadCell entrance = findEmptyEntrance();
                 if (entrance != null) {
                     Vehicle car = VehicleFactory.createVehicle(new Point(entrance.getPositionX(), entrance.getPositionY())
                             , entrance, grid);
@@ -86,8 +86,8 @@ public class GridController extends Thread implements GridCarObserver, CarObserv
         }
     }
 
-    private Cell findEmptyEntrance() {
-        List<Cell> entrances = grid.getEntrances();
+    private RoadCell findEmptyEntrance() {
+        List<RoadCell> entrances = grid.getEntrances();
         var randomIndex = new Random().nextInt(0, entrances.size());
         var entrance = entrances.get(randomIndex);
         if (!entrance.isOccupied()) {
@@ -96,7 +96,7 @@ public class GridController extends Thread implements GridCarObserver, CarObserv
         return null;
     }
 
-    public List<Cell> getGridCells() {
+    public List<RoadCell> getGridCells() {
         return grid.getCells();
     }
 
@@ -134,7 +134,7 @@ public class GridController extends Thread implements GridCarObserver, CarObserv
             car.removeCarFromGrid();
             car.interrupt();
         }
-        for (Cell cell : grid.getCells()) {
+        for (RoadCell cell : grid.getCells()) {
             if (cell.getVehicle() != null) {
                 cell.releaseVehicle();
             }

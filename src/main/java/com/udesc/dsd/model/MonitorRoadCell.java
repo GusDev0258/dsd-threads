@@ -3,7 +3,7 @@ package com.udesc.dsd.model;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class MonitorRoadCell extends Cell {
+public class MonitorRoadCell extends RoadCell {
     private final Lock monitor = new ReentrantLock();
     private Vehicle vehicle;
 
