@@ -430,5 +430,4 @@ public class Vehicle extends Thread {
     private Cell getGridCellBasedOnCoordinates(int x, int y) {
         return grid.getGridCellAt(x, y);
     }
-
 }
