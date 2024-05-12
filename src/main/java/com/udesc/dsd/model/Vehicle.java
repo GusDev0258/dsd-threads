@@ -1,18 +1,18 @@
 package com.udesc.dsd.model;
 
 import com.udesc.dsd.model.observer.CarObserver;
+import com.udesc.dsd.model.strategy.CrossingChoiceStrategy;
+import com.udesc.dsd.model.strategy.CrossingStepsStrategy;
+import com.udesc.dsd.model.strategy.RandomCrossingStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class Vehicle extends Thread {
-    private static final String CROSS_POSSIBILITY_UP = "crossingUp";
-    private static final String CROSS_POSSIBILITY_DOWN = "crossingDown";
-    private static final String CROSS_POSSIBILITY_LEFT = "crossingLeft";
-    private static final String CROSS_POSSIBILITY_RIGHT = "crossingRight";
     private final Grid grid;
     private final Random random = new Random();
+    public List<CarObserver> observers = new ArrayList<>();
     List<RoadCell> crossingPath = new ArrayList<>();
     List<String> crossingPossibilities = new ArrayList<>();
     private int x, y;
@@ -26,7 +26,6 @@ public class Vehicle extends Thread {
     private boolean crossingDown;
     private boolean crossingLeft;
     private String image;
-    public List<CarObserver> observers = new ArrayList<>();
 
     public Vehicle(int x, int y, Grid grid) {
         this.x = x;
@@ -39,26 +38,91 @@ public class Vehicle extends Thread {
     public void addObserver(CarObserver obs) {
         this.observers.add(obs);
     }
-    public void removeObserver(){
+
+    public void removeObserver() {
         this.observers.clear();
     }
+
     public void notifyObserversCarIsOutOfGrid() {
-        for(CarObserver obs: observers) {
+        for (CarObserver obs : observers) {
             obs.onVehicleLeft(this);
         }
-    }
-    public String getRandomImage() {
-        List<String> carImages = new ArrayList<>();
-        carImages.add(SimulationSettings.CAR_IMAGE_PATH);
-        carImages.add(SimulationSettings.CAR_IMAGE_PATH_2);
-        carImages.add(SimulationSettings.CAR_IMAGE_PATH_3);
-        carImages.add(SimulationSettings.CAR_IMAGE_PATH_4);
-        var randomIndex = random.nextInt(0, carImages.size());
-        return carImages.get(randomIndex);
     }
 
     public String getCarImage() {
         return this.image;
+    }
+
+    public List<RoadCell> getCrossingPath() {
+        return this.crossingPath;
+    }
+
+    public void addStepsToCrossingPath(RoadCell step) {
+        this.crossingPath.add(step);
+    }
+
+    public RoadCell getStep1() {
+        return step1;
+    }
+
+    public void setStep1(RoadCell step1) {
+        this.step1 = step1;
+    }
+
+    public RoadCell getStep2() {
+        return step2;
+    }
+
+    public void setStep2(RoadCell step2) {
+        this.step2 = step2;
+    }
+
+    public RoadCell getStep3() {
+        return step3;
+    }
+
+    public void setStep3(RoadCell step3) {
+        this.step3 = step3;
+    }
+
+    public RoadCell getDestiny() {
+        return destiny;
+    }
+
+    public void setDestiny(RoadCell destiny) {
+        this.destiny = destiny;
+    }
+
+    public boolean isCrossingUp() {
+        return crossingUp;
+    }
+
+    public void setCrossingUp(boolean crossingUp) {
+        this.crossingUp = crossingUp;
+    }
+
+    public boolean isCrossingRight() {
+        return crossingRight;
+    }
+
+    public void setCrossingRight(boolean crossingRight) {
+        this.crossingRight = crossingRight;
+    }
+
+    public boolean isCrossingDown() {
+        return crossingDown;
+    }
+
+    public void setCrossingDown(boolean crossingDown) {
+        this.crossingDown = crossingDown;
+    }
+
+    public boolean isCrossingLeft() {
+        return crossingLeft;
+    }
+
+    public void setCrossingLeft(boolean crossingLeft) {
+        this.crossingLeft = crossingLeft;
     }
 
     public int getX() {
@@ -87,29 +151,34 @@ public class Vehicle extends Thread {
         this.setY(this.getCurrentCell().getPositionY());
     }
 
-    private void setCrossingUp(boolean crossingUp) {
-        this.crossingUp = crossingUp;
+    public List<String> getCrossingPossibilities() {
+        return crossingPossibilities;
     }
 
-    private void setCrossingRight(boolean crossingRight) {
-        this.crossingRight = crossingRight;
+    public void setCrossingPossibilities(List<String> crossingPossibilities) {
+        this.crossingPossibilities = crossingPossibilities;
     }
 
-    private void setCrossingDown(boolean crossingDown) {
-        this.crossingDown = crossingDown;
+    public void addCrossingPobility(String possibility) {
+        this.crossingPossibilities.add(possibility);
     }
 
-    private void setCrossingLeft(boolean crossingLeft) {
-        this.crossingLeft = crossingLeft;
+    public String getRandomImage() {
+        List<String> carImages = new ArrayList<>();
+        carImages.add(SimulationSettings.CAR_IMAGE_PATH);
+        carImages.add(SimulationSettings.CAR_IMAGE_PATH_2);
+        carImages.add(SimulationSettings.CAR_IMAGE_PATH_3);
+        carImages.add(SimulationSettings.CAR_IMAGE_PATH_4);
+        var randomIndex = random.nextInt(0, carImages.size());
+        return carImages.get(randomIndex);
     }
 
-    public boolean removeCarFromGrid() {
+    public void removeCarFromGrid() {
         if (this.currentCell != null) {
             this.currentCell.releaseVehicle();
             this.isOutOfGrid = true;
             this.notifyObserversCarIsOutOfGrid();
         }
-        return this.isOutOfGrid;
     }
 
     @Override
@@ -120,8 +189,10 @@ public class Vehicle extends Thread {
                 moveCarStraightForward();
                 Thread.sleep(speed);
                 if (currentCell.isNextCellACrossing()) {
-                    verifyCrossingChoicePossibilities();
-                    String destino = crossingChoice();// essa aqui é a escolha do carro apos chegar em um cruzamento
+                    CrossingChoiceStrategy.execute(this);
+                    String destino = RandomCrossingStrategy.execute(this);// essa aqui é a escolha do carro apos chegar
+                    // em um
+                    // cruzamento
                     while (!isAllPathFree(destino)) {
                         Thread.sleep(100 + random.nextInt(450));
                     }
@@ -138,7 +209,7 @@ public class Vehicle extends Thread {
     }
 
     private boolean isAllPathFree(String destino) {
-        returnCrossingSteps(destino);
+        CrossingStepsStrategy.execute(this, destino);
         List<RoadCell> acquiredCells = new ArrayList<>();
         for (RoadCell step : this.crossingPath) {
             if (step.acquireCell()) {
@@ -173,24 +244,6 @@ public class Vehicle extends Thread {
         this.releaseCarFromAcquiredCrossingCells(this.crossingPath);
     }
 
-    private void moveCarThroughCells(List<RoadCell> pathToMoveOn) {
-        for (RoadCell cell : pathToMoveOn) {
-            var oldCell = this.getCurrentCell();
-            cell.tryEnter(this);
-            oldCell.releaseVehicle();
-            this.setCurrentCell(cell);
-            this.setX(cell.getPositionX());
-            this.setY(cell.getPositionY());
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                this.removeCarFromGrid();
-                Thread.currentThread().interrupt();
-                e.printStackTrace();
-            }
-        }
-    }
-
     private void releaseCarFromAcquiredCrossingCells(List<RoadCell> cellsToLeave) {
         for (RoadCell cell : cellsToLeave) {
             if (cell.isCrossing()) {
@@ -199,14 +252,7 @@ public class Vehicle extends Thread {
         }
     }
 
-    private void moveVehicleTo(int nextX, int nextY) {
-        RoadCell nextCell = grid.getGridCellAt(nextX, nextY);
-        if (nextCell != null && !nextCell.isOccupied()) {
-            moveCar(nextCell);
-        }
-    }
-
-    public void moveCarStraightForward() {
+    private void moveCarStraightForward() {
         RoadCell nextCell = null;
         switch (getCurrentCell().getDirection()) {
             case Direction.ESTRADA_CIMA:
@@ -258,226 +304,7 @@ public class Vehicle extends Thread {
             }
         }
     }
-
     //Porém a direção que o carro já está (antes de entrar no cruzamento) não pode ser escolhida pois o carro não faz meia volta
-
     //verifica quais caminhos existem ao final do cruzamento para que o carro escolha um aleatório
-    private void verifyCrossingChoicePossibilities() {
-        resetCrossingPossibilities();
-        switch (getCurrentCell().getDirection()) {
-            case Direction.ESTRADA_CIMA: //significa que ele vem de baixo, no cruzamento pode escolher entre subir, esquerda ou direita
-                if (returnCellDirection(x, y - 3) == Direction.ESTRADA_CIMA) { //valida se a célula acima do cruzamento existe e é uma estrada
-                    setCrossingUp(true);
-                }
-                if (returnCellDirection(x + 1, y - 1) == Direction.ESTRADA_DIREITA) { //valida se a célula para a direita do cruzamento existe e é uma estrada
-                    setCrossingRight(true);
-                }
-                setCrossingDown(false);
-                if (returnCellDirection(x - 2, y - 2) == Direction.ESTRADA_ESQUERDA) { //valida se a célula para a esquerda do cruzamento existe e é uma estrada
-                    setCrossingLeft(true);
-                }
-                break;
-            case Direction.ESTRADA_DIREITA: //significa que ele vem da esquerda, no cruzamento pode escolher entre subir, descer ou direita e é uma estrada
-                if (returnCellDirection(x + 2, y - 2) == Direction.ESTRADA_CIMA) {
-                    setCrossingUp(true);
-                }
-                if (returnCellDirection(x + 3, y) == Direction.ESTRADA_DIREITA) {
-                    setCrossingRight(true);
-                }
-                if (returnCellDirection(x + 1, y + 1) == Direction.ESTRADA_BAIXO) {
-                    setCrossingDown(true);
-                }
-                setCrossingLeft(false);
-                break;
-            case Direction.ESTRADA_BAIXO: //significa que ele vem de cima, no cruzamento pode escolher entre descer, esquerda ou direita
-                setCrossingUp(false);
-                if (returnCellDirection(x + 2, y + 2) == Direction.ESTRADA_DIREITA) {
-                    setCrossingRight(true);
-                }
-                if (returnCellDirection(x, y + 3) == Direction.ESTRADA_BAIXO) {
-                    setCrossingDown(true);
-                }
-                if (returnCellDirection(x - 1, y + 1) == Direction.ESTRADA_ESQUERDA) {
-                    setCrossingLeft(true);
-                    System.out.println(returnCellDirection(x - 1, y + 1));
-                }
-                break;
-            case Direction.ESTRADA_ESQUERDA: //significa que ele vem da direita, no cruzamento pode escolher entre descer, esquerda ou subir
-                if (returnCellDirection(x - 1, y - 1) == Direction.ESTRADA_CIMA) {
-                    setCrossingUp(true);
-                }
-                setCrossingRight(false);
-                if (returnCellDirection(x - 2, y + 2) == Direction.ESTRADA_BAIXO) {
-                    setCrossingDown(true);
-                }
-                if (returnCellDirection(x - 3, y) == Direction.ESTRADA_ESQUERDA) {
-                    setCrossingLeft(true);
-                }
-                break;
-        }
-    }
-
-    private void resetCrossingPossibilities() {
-        setCrossingUp(false);
-        setCrossingRight(false);
-        setCrossingLeft(false);
-        setCrossingDown(false);
-    }
-
-    private String crossingChoice() {
-        crossingPossibilities = getCrossingPossibilities();
-        String randomlySelectedAttribute = crossingPossibilities.get(random.nextInt(0, crossingPossibilities.size()));
-        return randomlySelectedAttribute;
-    }
-
-    //cria lista com possibilidades de escolha
-    private List<String> getCrossingPossibilities() {
-        crossingPossibilities.clear();
-        if (crossingUp) {
-            crossingPossibilities.add(CROSS_POSSIBILITY_UP);
-        }
-        if (crossingRight) {
-            crossingPossibilities.add(CROSS_POSSIBILITY_RIGHT);
-        }
-        if (crossingDown) {
-            crossingPossibilities.add(CROSS_POSSIBILITY_DOWN);
-        }
-        if (crossingLeft) {
-            crossingPossibilities.add(CROSS_POSSIBILITY_LEFT);
-        }
-        return crossingPossibilities;
-    }
-
     //dentre as possibilidades que o carro pode ter, escolhe um aleatoriamente
-
-    private int returnCellDirection(int x, int y) {
-        RoadCell cell = grid.getGridCellAt(x, y);
-        int direction = cell.getDirection();
-        return direction;
-    }
-
-    private List<RoadCell> returnCrossingSteps(String destino) {
-        //deve gravar em ordem
-        crossingPath.clear();
-        switch (destino) {
-            case CROSS_POSSIBILITY_UP:
-                switch (getCurrentCell().getDirection()) {
-                    case Direction.ESTRADA_CIMA:
-                        step1 = getGridCellBasedOnCoordinates(x, y - 1);
-                        step2 = getGridCellBasedOnCoordinates(x, y - 2);
-                        destiny = getGridCellBasedOnCoordinates(x, y - 3);
-                        crossingPath.add(step1);
-                        crossingPath.add(step2);
-                        crossingPath.add(destiny);
-                        break;
-                    case Direction.ESTRADA_DIREITA:
-                        step1 = getGridCellBasedOnCoordinates(x + 1, y);
-                        step2 = getGridCellBasedOnCoordinates(x + 2, y);
-                        step3 = getGridCellBasedOnCoordinates(x + 2, y - 1);
-                        destiny = getGridCellBasedOnCoordinates(x + 2, y - 2);
-                        crossingPath.add(step1);
-                        crossingPath.add(step2);
-                        crossingPath.add(step3);
-                        crossingPath.add(destiny);
-                        break;
-                    case Direction.ESTRADA_ESQUERDA:
-                        step1 = getGridCellBasedOnCoordinates(x - 1, y);
-                        destiny = getGridCellBasedOnCoordinates(x - 1, y - 1);
-                        crossingPath.add(step1);
-                        crossingPath.add(destiny);
-                        break;
-                }
-                break;
-            case CROSS_POSSIBILITY_RIGHT:
-                switch (getCurrentCell().getDirection()) {
-                    case Direction.ESTRADA_CIMA:
-                        step1 = getGridCellBasedOnCoordinates(x, y - 1);
-                        destiny = getGridCellBasedOnCoordinates(x + 1, y - 1);
-                        crossingPath.add(step1);
-                        crossingPath.add(destiny);
-                        break;
-                    case Direction.ESTRADA_DIREITA:
-                        step1 = getGridCellBasedOnCoordinates(x + 1, y);
-                        step2 = getGridCellBasedOnCoordinates(x + 2, y);
-                        destiny = getGridCellBasedOnCoordinates(x + 3, y);
-                        crossingPath.add(step1);
-                        crossingPath.add(step2);
-                        crossingPath.add(destiny);
-                        break;
-                    case Direction.ESTRADA_BAIXO:
-                        step1 = getGridCellBasedOnCoordinates(x, y + 1);
-                        step2 = getGridCellBasedOnCoordinates(x, y + 2);
-                        step3 = getGridCellBasedOnCoordinates(x + 1, y + 2);
-                        destiny = getGridCellBasedOnCoordinates(x + 2, y + 2);
-                        crossingPath.add(step1);
-                        crossingPath.add(step2);
-                        crossingPath.add(step3);
-                        crossingPath.add(destiny);
-                        break;
-                }
-                break;
-            case CROSS_POSSIBILITY_DOWN:
-                switch (getCurrentCell().getDirection()) {
-                    case Direction.ESTRADA_DIREITA:
-                        step1 = getGridCellBasedOnCoordinates(x + 1, y);
-                        destiny = getGridCellBasedOnCoordinates(x + 1, y + 1);
-                        crossingPath.add(step1);
-                        crossingPath.add(destiny);
-                        break;
-                    case Direction.ESTRADA_BAIXO:
-                        step1 = getGridCellBasedOnCoordinates(x, y + 1);
-                        step2 = getGridCellBasedOnCoordinates(x, y + 2);
-                        destiny = getGridCellBasedOnCoordinates(x, y + 3);
-                        crossingPath.add(step1);
-                        crossingPath.add(step2);
-                        crossingPath.add(destiny);
-                        break;
-                    case Direction.ESTRADA_ESQUERDA:
-                        step1 = getGridCellBasedOnCoordinates(x - 1, y);
-                        step2 = getGridCellBasedOnCoordinates(x - 2, y);
-                        step3 = getGridCellBasedOnCoordinates(x - 2, y + 1);
-                        destiny = getGridCellBasedOnCoordinates(x - 2, y + 2);
-                        crossingPath.add(step1);
-                        crossingPath.add(step2);
-                        crossingPath.add(step3);
-                        crossingPath.add(destiny);
-                        break;
-                }
-                break;
-            case CROSS_POSSIBILITY_LEFT:
-                switch (getCurrentCell().getDirection()) {
-                    case Direction.ESTRADA_CIMA:
-                        step1 = getGridCellBasedOnCoordinates(x, y - 1);
-                        step2 = getGridCellBasedOnCoordinates(x, y - 2);
-                        step3 = getGridCellBasedOnCoordinates(x - 1, y - 2);
-                        destiny = getGridCellBasedOnCoordinates(x - 2, y - 2);
-                        crossingPath.add(step1);
-                        crossingPath.add(step2);
-                        crossingPath.add(step3);
-                        crossingPath.add(destiny);
-                        break;
-                    case Direction.ESTRADA_BAIXO:
-                        step1 = getGridCellBasedOnCoordinates(x, y + 1);
-                        destiny = getGridCellBasedOnCoordinates(x - 1, y + 1);
-                        crossingPath.add(step1);
-                        crossingPath.add(destiny);
-                        break;
-                    case Direction.ESTRADA_ESQUERDA:
-                        step1 = getGridCellBasedOnCoordinates(x - 1, y);
-                        step2 = getGridCellBasedOnCoordinates(x - 2, y);
-                        destiny = getGridCellBasedOnCoordinates(x - 3, y);
-                        crossingPath.add(step1);
-                        crossingPath.add(step2);
-                        crossingPath.add(destiny);
-                        break;
-                }
-                break;
-        }
-        return crossingPath;
-    }
-
-    private RoadCell getGridCellBasedOnCoordinates(int x, int y) {
-        return grid.getGridCellAt(x, y);
-    }
-
 }
