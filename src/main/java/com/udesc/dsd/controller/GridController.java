@@ -66,7 +66,7 @@ public class GridController extends Thread implements GridCarObserver, CarObserv
 
     public void populateCarsIntoTheGrid() {
         try {
-            while (carQtd < settings.getCarQuantity() && settings.isSimulationRunning()) {
+            while (shouldContinuePopulation()) {
                 Cell entrance = findEmptyEntrance();
                 if (entrance != null) {
                     Vehicle car = VehicleFactory.createVehicle(new Point(entrance.getPositionX(), entrance.getPositionY())
@@ -83,6 +83,9 @@ public class GridController extends Thread implements GridCarObserver, CarObserv
             exception.printStackTrace();
             Thread.currentThread().interrupt();
         }
+    }
+    private boolean shouldContinuePopulation() {
+       return carQtd < settings.getCarQuantity() && settings.isSimulationRunning();
     }
 
     private Cell findEmptyEntrance() {
@@ -121,5 +124,21 @@ public class GridController extends Thread implements GridCarObserver, CarObserv
         cars.remove(vehicle);
         carQtd--;
         populateCarsIntoTheGrid();
+    }
+
+    public void shutDownSimulation() {
+        settings.stopSimulation();
+        Thread.currentThread().interrupt();
+        for (Vehicle car : cars.values()) {
+            this.carQtd = 0;
+            car.getCurrentCell().releaseVehicle();
+            car.removeCarFromGrid();
+            car.interrupt();
+        }
+        for (Cell cell : grid.getCells()) {
+            if (cell.getVehicle() != null) {
+                cell.releaseVehicle();
+            }
+        }
     }
 }

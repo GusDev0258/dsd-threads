@@ -9,6 +9,7 @@ public class GridView extends JFrame {
     private final JPanel gridPanel;
     private GridController gridController;
 
+
     public GridView(GridController gridController) {
         this.gridController = gridController;
         var rows = gridController.getGrid().getRowCount();
@@ -23,7 +24,7 @@ public class GridView extends JFrame {
         add(gridPanel);
         setTitle("Simulação de Trânsito");
         setSize(800, 600);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         gridController.start();
     }

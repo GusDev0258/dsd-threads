@@ -18,19 +18,35 @@ public class HomePageView {
     private JRadioButton radioButtonSemaforo;
     private JRadioButton radioButtonMonitor;
     private JLabel nomeArquivo;
+    private JButton finishSimulationButton;
+    private JButton forceFinishSimulationButton;
     private File arquivo = null;
     private String msgErro;
 
     private SimulationSettings settings = SimulationSettings.getInstance();
+    private GridView malhaView;
 
     public HomePageView() {
         JFrame frame = new JFrame("dsd-threads");
-        frame.setSize(300, 300);
+        frame.setSize(600, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel1);
 
         frame.setVisible(true);
-
+        finishSimulationButton.addActionListener(e -> {
+            if (settings.isSimulationRunning()) {
+                settings.stopSimulation();
+                settings.setSimulationCarQuantity(-1);
+            }
+        });
+        forceFinishSimulationButton.addActionListener(e -> {
+            if (settings.isSimulationRunning()) {
+                gridController.shutDownSimulation();
+                if(this.malhaView != null) {
+                    this.malhaView.dispose();
+                }
+            }
+        });
         buttonSelecionarMalha.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -52,11 +68,12 @@ public class HomePageView {
         });
     }
 
+
     private void startController() {
         if (gridController.getGrid().getGridMap() != null) {
             settings.startSimulation();
-            GridView malhaView = new GridView(gridController);
-            malhaView.setVisible(true);
+            this.malhaView = new GridView(gridController);
+            this.malhaView.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Não foi possível carregar a malha", "Erro na malha",
                     JOptionPane.ERROR_MESSAGE);
