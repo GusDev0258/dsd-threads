@@ -387,9 +387,9 @@ public class Vehicle extends Thread {
                         crossingPath.add(destiny);
                         break;
                     case Direction.ESTRADA_ESQUERDA:
-                        step1 = getGridCellBasedOnCoordinates(x+1, y);
-                        step2 = getGridCellBasedOnCoordinates(x+2, y);
-                        destiny = getGridCellBasedOnCoordinates(x+3, y);
+                        step1 = getGridCellBasedOnCoordinates(x-1, y);
+                        step2 = getGridCellBasedOnCoordinates(x-2, y);
+                        destiny = getGridCellBasedOnCoordinates(x-3, y);
                         crossingPath.add(step1);
                         crossingPath.add(step2);
                         crossingPath.add(destiny);
