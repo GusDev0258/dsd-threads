@@ -25,12 +25,28 @@ public class RoadCell extends Cell {
         return acquired;
 
     }
+    @Override
+    public boolean acquireCell() {
+        return semaphore.tryAcquire();
+    }
+
+    @Override
+    public void insertCarIntoCell(Vehicle vehicle) {
+        this.setVehicle(vehicle);
+        notifyCarEntered(vehicle);
+    }
+
+    @Override
+    public void releaseCell() {
+        semaphore.release();
+    }
 
     @Override
     public void releaseVehicle() {
-        semaphore.release();
-        notifyCarLeft(getVehicle());
+        var vehicle = getVehicle();
         this.setVehicle(null);
+        semaphore.release();
+        notifyCarLeft(vehicle);
     }
 
     public Semaphore getSemaphore() {

@@ -150,7 +150,10 @@ public abstract class Cell  {
     }
 
     abstract public boolean tryEnter(Vehicle vehicle);
+    abstract public boolean acquireCell();
 
+    abstract public void insertCarIntoCell(Vehicle vehicle);
+    abstract public void releaseCell();
     abstract public void releaseVehicle();
 
     public void setCellImage() {

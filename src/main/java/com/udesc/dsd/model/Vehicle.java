@@ -106,18 +106,31 @@ public class Vehicle extends Thread {
 
     private boolean isAllPathFree(String destino) {
         returnCrossingSteps(destino);
-        int freeCells = 0;
+        List<Cell> acquiredCells = new ArrayList<>();
         for (Cell step : this.crossingPath) {
-            if (!step.isOccupied()) freeCells++;
+            if (step.acquireCell()) {
+                acquiredCells.add(step);
+            } else {
+                // If we can't acquire a cell, release any cells we have acquired and return false
+                for (Cell cell : acquiredCells) {
+                    cell.releaseCell();
+                }
+                return false;
+            }
         }
-        return freeCells == this.crossingPath.size();
+        // If we've made it here, we've acquired all cells in the path
+        return true;
     }
 
     private void followPath() {
         for (Cell step : this.crossingPath) {
-            step.tryEnter(this);
-            this.getCurrentCell().releaseVehicle();
-            this.setCurrentCell(step);
+            if (!step.isOccupied()) {
+                step.tryEnter(this);
+            } else if (step.isOccupied() && step.getVehicle() == null) {
+                step.insertCarIntoCell(this);
+                this.getCurrentCell().releaseVehicle();
+                this.setCurrentCell(step);
+            }
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -430,4 +443,5 @@ public class Vehicle extends Thread {
     private Cell getGridCellBasedOnCoordinates(int x, int y) {
         return grid.getGridCellAt(x, y);
     }
+
 }

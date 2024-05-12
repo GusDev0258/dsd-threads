@@ -8,6 +8,9 @@ import com.udesc.dsd.model.observer.CellObserver;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class CellLabel extends JLabel implements CellObserver {
     private final Cell labelCell;
@@ -31,7 +34,7 @@ public class CellLabel extends JLabel implements CellObserver {
 
     @Override
     public void onCarEntered(Vehicle vehicle, Cell cell) {
-       if(cell.getPositionX() == this.labelCell.getPositionX() && cell.getPositionY() == this.labelCell.getPositionY()) {
+       if(cell.getPositionX() == this.labelCell.getPositionX() && cell.getPositionY() == this.labelCell.getPositionY() && cell.isOccupied() && cell.getVehicle() != null) {
            setLabelIcon(SimulationSettings.CAR_IMAGE_PATH);
            validate();
            repaint();
