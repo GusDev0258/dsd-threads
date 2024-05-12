@@ -1,5 +1,7 @@
 package com.udesc.dsd.model;
 
+import com.udesc.dsd.model.observer.CarObserver;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -24,6 +26,7 @@ public class Vehicle extends Thread {
     private boolean crossingDown;
     private boolean crossingLeft;
     private String image;
+    public List<CarObserver> observers = new ArrayList<>();
 
     public Vehicle(int x, int y, Grid grid) {
         this.x = x;
@@ -33,6 +36,17 @@ public class Vehicle extends Thread {
         this.image = getRandomImage();
     }
 
+    public void addObserver(CarObserver obs) {
+        this.observers.add(obs);
+    }
+    public void removeObserver(){
+        this.observers.clear();
+    }
+    public void notifyObserversCarIsOutOfGrid() {
+        for(CarObserver obs: observers) {
+            obs.onVehicleLeft(this);
+        }
+    }
     public String getRandomImage() {
         List<String> carImages = new ArrayList<>();
         carImages.add(SimulationSettings.CAR_IMAGE_PATH);
@@ -92,9 +106,10 @@ public class Vehicle extends Thread {
     public boolean removeCarFromGrid() {
         if (this.currentCell != null) {
             this.currentCell.releaseVehicle();
+            this.isOutOfGrid = true;
+            this.notifyObserversCarIsOutOfGrid();
         }
-        this.isOutOfGrid = true;
-        return true;
+        return this.isOutOfGrid;
     }
 
     @Override

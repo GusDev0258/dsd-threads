@@ -2,13 +2,14 @@ package com.udesc.dsd.controller;
 
 import com.udesc.dsd.model.*;
 import com.udesc.dsd.model.factory.VehicleFactory;
+import com.udesc.dsd.model.observer.CarObserver;
 import com.udesc.dsd.model.observer.GridCarObserver;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-public class GridController extends Thread implements GridCarObserver {
+public class GridController extends Thread implements GridCarObserver, CarObserver {
     private File file = null;
     private Grid grid = Grid.getInstance();
     private SimulationSettings settings = SimulationSettings.getInstance();
@@ -59,22 +60,28 @@ public class GridController extends Thread implements GridCarObserver {
         return this.grid;
     }
 
-    public void startSimulation() throws InterruptedException{
+    public void startSimulation() {
         populateCarsIntoTheGrid();
     }
 
-    public void populateCarsIntoTheGrid() throws InterruptedException{
-        while (carQtd < settings.getCarQuantity() && settings.isSimulationRunning()) {
-            Cell entrance = findEmptyEntrance();
-            if (entrance != null ) {
-                Vehicle car = VehicleFactory.createVehicle(new Point(entrance.getPositionX(), entrance.getPositionY())
-                        , entrance, grid);
-                Thread.sleep(2000 );
-                entrance.tryEnter(car);
-                car.start();
-                grid.notifyVehicleEnter(car);
-                carQtd++;
+    public void populateCarsIntoTheGrid() {
+        try {
+            while (carQtd < settings.getCarQuantity() && settings.isSimulationRunning()) {
+                Cell entrance = findEmptyEntrance();
+                if (entrance != null) {
+                    Vehicle car = VehicleFactory.createVehicle(new Point(entrance.getPositionX(), entrance.getPositionY())
+                            , entrance, grid);
+                    Thread.sleep(2000);
+                    entrance.tryEnter(car);
+                    car.addObserver(this);
+                    car.start();
+                    grid.notifyVehicleEnter(car);
+                    carQtd++;
+                }
             }
+        } catch (InterruptedException exception) {
+            exception.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -105,12 +112,14 @@ public class GridController extends Thread implements GridCarObserver {
     @Override
     public void run() {
         while (settings.isSimulationRunning()) {
-            try {
-                this.startSimulation();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                e.printStackTrace();
-            }
+            this.startSimulation();
         }
+    }
+
+    @Override
+    public void onVehicleLeft(Vehicle vehicle) {
+        cars.remove(vehicle);
+        carQtd--;
+        populateCarsIntoTheGrid();
     }
 }

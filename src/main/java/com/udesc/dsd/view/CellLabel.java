@@ -2,15 +2,11 @@ package com.udesc.dsd.view;
 
 import com.udesc.dsd.controller.GridController;
 import com.udesc.dsd.model.Cell;
-import com.udesc.dsd.model.SimulationSettings;
 import com.udesc.dsd.model.Vehicle;
 import com.udesc.dsd.model.observer.CellObserver;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Random;
 
 public class CellLabel extends JLabel implements CellObserver {
     private final Cell labelCell;
