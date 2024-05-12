@@ -1,6 +1,6 @@
 package com.udesc.dsd.model;
 
-import com.udesc.dsd.model.factory.CellFactory;
+import com.udesc.dsd.model.factory.AbstractCellFactory;
 import com.udesc.dsd.model.observer.GridCarObserver;
 import com.udesc.dsd.model.strategy.EntranceStrategy;
 
@@ -50,7 +50,7 @@ public class Grid {
             for (int y = 0; y < getRowCount(); y++) {
                 for (int x = 0; x < getColumCount(); x++) {
                     var currentDirection = gridMap[y][x];
-                    var cell = CellFactory.createCell(x, y, currentDirection);
+                    var cell = AbstractCellFactory.createCell(x, y, currentDirection);
                     this.checkAndMakeCellIsEntranceOrExit(cell, y, x);
                     cells.put(new Point(x, y), cell);
                 }
