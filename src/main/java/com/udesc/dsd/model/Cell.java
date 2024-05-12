@@ -21,6 +21,7 @@ public abstract class Cell  {
     private Cell rightNeighbour;
     private Cell leftNeighbour;
 
+    private Cell nextCrossingCell;
     private List<CellObserver> observers = new ArrayList<>();
 
     private List<Cell> crossingNeighbours = new ArrayList<>();
@@ -53,6 +54,14 @@ public abstract class Cell  {
 
     public abstract boolean isOccupied();
 
+    public Cell getNextCrossingCell() {
+        return nextCrossingCell;
+    }
+
+    public void setNextCrossingCell(Cell nextCrossingCell) {
+        this.nextCrossingCell = nextCrossingCell;
+    }
+
     public int getPositionX() {
         return positionX;
     }
@@ -81,7 +90,7 @@ public abstract class Cell  {
         return vehicle;
     }
 
-    public void setVehicle(Vehicle vehicle) {
+    protected void setVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
     }
 
@@ -194,21 +203,25 @@ public abstract class Cell  {
           switch(direction) {
               case Direction.ESTRADA_CIMA -> {
                   if(this.upNeighbour.isCrossing()){
+                      this.setNextCrossingCell(this.getUpNeighbour());
                       return true;
                   }
               }
               case Direction.ESTRADA_DIREITA -> {
                   if(this.rightNeighbour.isCrossing()) {
+                      this.setNextCrossingCell(this.getRightNeighbour());
                       return true;
                   }
               }
               case Direction.ESTRADA_BAIXO -> {
                   if(this.downNeighbour.isCrossing()){
+                      this.setNextCrossingCell(this.getDownNeighbour());
                       return true;
                   }
               }
               case Direction.ESTRADA_ESQUERDA -> {
                   if(this.leftNeighbour.isCrossing()) {
+                      this.setNextCrossingCell(this.getLeftNeighbour());
                       return true;
                   }
               }

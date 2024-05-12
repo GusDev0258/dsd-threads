@@ -9,9 +9,7 @@ import java.util.Random;
 
 public class VehicleFactory {
     public static Vehicle createVehicle(Point point, Cell cell, Grid currentGrid){
-        var randomObject = new Random();
-        var randomSpeed = (int) (1 + randomObject.nextFloat() * (10 - 1) * 100) + 375;
-        var car = new Vehicle(point.getPositionX(), point.getPositionY(), randomSpeed, currentGrid);
+        var car = new Vehicle(point.getPositionX(), point.getPositionY(), currentGrid);
         car.setCurrentCell(cell);
         return car;
     }
