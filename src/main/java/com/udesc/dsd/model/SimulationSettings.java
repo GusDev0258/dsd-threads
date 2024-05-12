@@ -4,6 +4,9 @@ public class SimulationSettings {
     public final static int SIMULATION_MODE_SEMAPHORE = 0;
     public final static int SIMULATION_MODE_MONITOR = 1;
     public final static String CAR_IMAGE_PATH = "src/main/resources/car_icon.jpg";
+    public final static String CAR_IMAGE_PATH_2 = "src/main/resources/car_icon_2.png";
+    public final static String CAR_IMAGE_PATH_3 = "src/main/resources/car_icon_3.png";
+    public final static String CAR_IMAGE_PATH_4 = "src/main/resources/car_icon_4.png";
     public final static String UP_CELL_IMAGE_PATH = "src/main/resources/cell_up.png";
     public final static String RIGHT_CELL_IMAGE_PATH = "src/main/resources/cell_right.png";
     public final static String DOWN_CELL_IMAGE_PATH = "src/main/resources/cell_bottom.png";

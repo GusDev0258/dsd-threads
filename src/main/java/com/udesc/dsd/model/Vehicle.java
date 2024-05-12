@@ -23,12 +23,28 @@ public class Vehicle extends Thread {
     private boolean crossingRight;
     private boolean crossingDown;
     private boolean crossingLeft;
+    private String image;
 
     public Vehicle(int x, int y, Grid grid) {
         this.x = x;
         this.y = y;
         this.grid = grid;
-        this.speed = 600 + random.nextInt(1000);
+        this.speed = 200 + random.nextInt(800);
+        this.image = getRandomImage();
+    }
+
+    public String getRandomImage() {
+        List<String> carImages = new ArrayList<>();
+        carImages.add(SimulationSettings.CAR_IMAGE_PATH);
+        carImages.add(SimulationSettings.CAR_IMAGE_PATH_2);
+        carImages.add(SimulationSettings.CAR_IMAGE_PATH_3);
+        carImages.add(SimulationSettings.CAR_IMAGE_PATH_4);
+        var randomIndex = random.nextInt(0, carImages.size());
+        return carImages.get(randomIndex);
+    }
+
+    public String getCarImage() {
+        return this.image;
     }
 
     public int getX() {
@@ -92,7 +108,7 @@ public class Vehicle extends Thread {
                     verifyCrossingChoicePossibilities();
                     String destino = crossingChoice();// essa aqui é a escolha do carro apos chegar em um cruzamento
                     while (!isAllPathFree(destino)) {
-                        Thread.sleep(speed);
+                        Thread.sleep(100 + random.nextInt(450));
                     }
                     followPath();
                 }
@@ -111,14 +127,12 @@ public class Vehicle extends Thread {
             if (step.acquireCell()) {
                 acquiredCells.add(step);
             } else {
-                // If we can't acquire a cell, release any cells we have acquired and return false
                 for (Cell cell : acquiredCells) {
                     cell.releaseCell();
                 }
                 return false;
             }
         }
-        // If we've made it here, we've acquired all cells in the path
         return true;
     }
 
@@ -132,7 +146,7 @@ public class Vehicle extends Thread {
                 this.setCurrentCell(step);
             }
             try {
-                Thread.sleep(1000);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 this.interrupt();
                 e.printStackTrace();
