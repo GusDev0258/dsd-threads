@@ -40,7 +40,7 @@ public class HomePageView {
             }
         });
         forceFinishSimulationButton.addActionListener(e -> {
-                gridController.shutDownSimulation();
+            gridController.shutDownSimulation();
         });
         buttonSelecionarMalha.addActionListener(new ActionListener() {
             @Override

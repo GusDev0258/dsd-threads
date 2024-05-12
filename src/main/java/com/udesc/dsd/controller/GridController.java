@@ -125,19 +125,24 @@ public class GridController extends Thread implements GridCarObserver, CarObserv
     }
 
     public void shutDownSimulation() {
-        settings.stopSimulation();
-        settings.forceSimulationShutDown();
-        Thread.currentThread().interrupt();
-        for (Vehicle car : cars.values()) {
-            this.carQtd = 0;
-            car.getCurrentCell().releaseVehicle();
-            car.removeCarFromGrid();
-            car.interrupt();
-        }
-        for (RoadCell cell : grid.getCells()) {
-            if (cell.getVehicle() != null) {
-                cell.releaseVehicle();
+        try {
+            settings.stopSimulation();
+            settings.forceSimulationShutDown();
+            Thread.sleep(carDelay);
+            for (Vehicle car : cars.values()) {
+                this.carQtd = 0;
+                car.getCurrentCell().releaseVehicle();
+                car.removeCarFromGrid();
+                car.interrupt();
             }
+            for (RoadCell cell : grid.getCells()) {
+                if (cell.getVehicle() != null) {
+                    cell.releaseVehicle();
+                }
+            }
+            Thread.currentThread().interrupt();
+        } catch (InterruptedException exception) {
+            exception.printStackTrace();
         }
     }
 
