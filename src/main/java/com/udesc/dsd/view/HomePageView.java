@@ -20,6 +20,7 @@ public class HomePageView {
     private JLabel nomeArquivo;
     private JButton finishSimulationButton;
     private JButton forceFinishSimulationButton;
+    private JTextField intervalField;
     private File arquivo = null;
     private String msgErro;
 
@@ -36,16 +37,10 @@ public class HomePageView {
         finishSimulationButton.addActionListener(e -> {
             if (settings.isSimulationRunning()) {
                 settings.stopSimulation();
-                settings.setSimulationCarQuantity(-1);
             }
         });
         forceFinishSimulationButton.addActionListener(e -> {
-            if (settings.isSimulationRunning()) {
                 gridController.shutDownSimulation();
-                if(this.malhaView != null) {
-                    this.malhaView.dispose();
-                }
-            }
         });
         buttonSelecionarMalha.addActionListener(new ActionListener() {
             @Override
@@ -70,6 +65,8 @@ public class HomePageView {
 
 
     private void startController() {
+        settings.carInsertionDelay(Long.parseLong(intervalField.getText()));
+        gridController.setCarInsertDelay(settings.getCarsPerSecond());
         if (gridController.getGrid().getGridMap() != null) {
             settings.startSimulation();
             this.malhaView = new GridView(gridController);

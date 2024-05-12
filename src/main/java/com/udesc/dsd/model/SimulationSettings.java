@@ -20,6 +20,7 @@ public class SimulationSettings {
     private boolean simulationRunning = false;
 
     private int mode = SIMULATION_MODE_SEMAPHORE;
+    public static boolean FORCED_SIMULATION = false;
 
     private SimulationSettings() {
     }
@@ -51,6 +52,9 @@ public class SimulationSettings {
     public void stopSimulation() {
         this.simulationRunning = false;
     }
+    public void forceSimulationShutDown() {
+        FORCED_SIMULATION = true;
+    }
 
     public void startSimulation() {
         this.simulationRunning = true;
@@ -64,7 +68,8 @@ public class SimulationSettings {
         return carsPerSecond;
     }
 
-    public void setCarsPerSecond(Long carsPerSecond) {
-        this.carsPerSecond = carsPerSecond;
+    public void carInsertionDelay(Long insertionDelayInSeconds) {
+        var toMiliseconds = insertionDelayInSeconds * 1000;
+        this.carsPerSecond = toMiliseconds;
     }
 }

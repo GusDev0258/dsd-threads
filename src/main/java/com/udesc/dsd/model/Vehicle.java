@@ -114,7 +114,7 @@ public class Vehicle extends Thread {
 
     @Override
     public void run() {
-        while (!isOutOfGrid && SimulationSettings.getInstance().isSimulationRunning()) {
+        while (!isOutOfGrid && !SimulationSettings.FORCED_SIMULATION) {
             try {
                 Thread.sleep(speed);
                 moveCarStraightForward();

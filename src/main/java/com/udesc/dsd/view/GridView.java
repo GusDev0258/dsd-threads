@@ -24,7 +24,7 @@ public class GridView extends JFrame {
         add(gridPanel);
         setTitle("Simulação de Trânsito");
         setSize(800, 600);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         gridController.start();
     }

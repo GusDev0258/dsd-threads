@@ -15,6 +15,7 @@ public class GridController extends Thread implements GridCarObserver, CarObserv
     private SimulationSettings settings = SimulationSettings.getInstance();
     private Map<Long, Vehicle> cars = new HashMap<>();
     private int carQtd = 0;
+    private Long carDelay;
 
     public GridController() {
         grid.addObserver(this);
@@ -66,12 +67,12 @@ public class GridController extends Thread implements GridCarObserver, CarObserv
 
     public void populateCarsIntoTheGrid() {
         try {
-            while (shouldContinuePopulation()) {
+            while (carQtd < settings.getCarQuantity() && settings.isSimulationRunning()) {
                 Cell entrance = findEmptyEntrance();
                 if (entrance != null) {
                     Vehicle car = VehicleFactory.createVehicle(new Point(entrance.getPositionX(), entrance.getPositionY())
                             , entrance, grid);
-                    Thread.sleep(2000);
+                    Thread.sleep(carDelay);
                     entrance.tryEnter(car);
                     car.addObserver(this);
                     car.start();
@@ -83,9 +84,6 @@ public class GridController extends Thread implements GridCarObserver, CarObserv
             exception.printStackTrace();
             Thread.currentThread().interrupt();
         }
-    }
-    private boolean shouldContinuePopulation() {
-       return carQtd < settings.getCarQuantity() && settings.isSimulationRunning();
     }
 
     private Cell findEmptyEntrance() {
@@ -128,6 +126,7 @@ public class GridController extends Thread implements GridCarObserver, CarObserv
 
     public void shutDownSimulation() {
         settings.stopSimulation();
+        settings.forceSimulationShutDown();
         Thread.currentThread().interrupt();
         for (Vehicle car : cars.values()) {
             this.carQtd = 0;
@@ -140,5 +139,13 @@ public class GridController extends Thread implements GridCarObserver, CarObserv
                 cell.releaseVehicle();
             }
         }
+    }
+
+    public Long getCarDelay() {
+        return carDelay;
+    }
+
+    public void setCarInsertDelay(Long carsPerSecond) {
+        this.carDelay = carsPerSecond;
     }
 }
