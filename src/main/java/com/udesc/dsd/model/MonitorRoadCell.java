@@ -4,77 +4,55 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MonitorRoadCell extends RoadCell {
-    private final Lock monitor = new ReentrantLock();
-    private Vehicle vehicle;
+    private final ReentrantLock lock;
 
     public MonitorRoadCell(int x, int y, int direction) {
         super(x, y, direction);
+        this.lock = new ReentrantLock();
     }
 
     @Override
     public boolean isOccupied() {
-        monitor.lock();
-        try {
-            return vehicle != null;
-        } finally {
-            monitor.unlock();
-        }
+        return lock.isLocked();
     }
 
     @Override
     public boolean tryEnter(Vehicle vehicle) {
-        if (monitor.tryLock()) {
-            try {
-                if (this.vehicle == null) {
-                    this.vehicle = vehicle;
-                    notifyCarEntered(vehicle);
-                    return true;
-                }
-            } finally {
-                monitor.unlock();
-            }
+        boolean acquired = lock.tryLock();
+        if (acquired) {
+            this.setVehicle(vehicle);
+            notifyCarEntered(vehicle);
         }
-        return false;
+        return acquired;
     }
 
     @Override
     public boolean acquireCell() {
-        monitor.lock();
-        try {
-            if (this.vehicle == null) {
-                return true;
-            }
-            return false;
-        } finally {
-            monitor.unlock();
-        }
+        return lock.tryLock();
     }
 
     @Override
     public void insertCarIntoCell(Vehicle vehicle) {
-        monitor.lock();
-        try {
-            this.vehicle = vehicle;
-            notifyCarEntered(vehicle);
-        } finally {
-            monitor.unlock();
-        }
+        this.setVehicle(vehicle);
+        notifyCarEntered(vehicle);
     }
 
     @Override
     public void releaseCell() {
-        monitor.unlock();
+        lock.unlock();
     }
 
     @Override
     public void releaseVehicle() {
-        monitor.lock();
-        try {
-            Vehicle exitingVehicle = this.vehicle;
-            this.vehicle = null;
-            notifyCarLeft(exitingVehicle);
-        } finally {
-            monitor.unlock();
+        var vehicle = getVehicle();
+        if (vehicle != null && lock.isHeldByCurrentThread()) {
+            this.setVehicle(null);
+            lock.unlock();
+            notifyCarLeft(vehicle);
         }
+    }
+
+    public Lock getLock() {
+        return this.lock;
     }
 }

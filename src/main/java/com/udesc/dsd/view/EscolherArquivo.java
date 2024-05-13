@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class EscolherArquivo extends JFileChooser {
-
     public EscolherArquivo(GridController gridController) {
         try {
             File diretorio = new File("src/main/resources");

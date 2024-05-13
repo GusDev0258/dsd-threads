@@ -77,6 +77,8 @@ public class GridController extends Thread implements GridCarObserver, CarObserv
                     car.addObserver(this);
                     car.start();
                     grid.notifyVehicleEnter(car);
+                    Thread.sleep(car.getCarSpeed());
+                    entrance.releaseVehicle();
                     carQtd++;
                 }
             }

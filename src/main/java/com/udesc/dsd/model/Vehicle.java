@@ -49,6 +49,9 @@ public class Vehicle extends Thread {
         }
     }
 
+    public int getCarSpeed() {
+       return this.speed;
+    }
     public String getCarImage() {
         return this.image;
     }

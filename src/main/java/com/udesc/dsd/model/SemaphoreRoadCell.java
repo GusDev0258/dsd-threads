@@ -25,6 +25,7 @@ public class SemaphoreRoadCell extends RoadCell {
         return acquired;
 
     }
+
     @Override
     public boolean acquireCell() {
         return semaphore.tryAcquire();
@@ -44,9 +45,11 @@ public class SemaphoreRoadCell extends RoadCell {
     @Override
     public void releaseVehicle() {
         var vehicle = getVehicle();
-        this.setVehicle(null);
-        semaphore.release();
-        notifyCarLeft(vehicle);
+        if (vehicle != null) {
+            this.setVehicle(null);
+            semaphore.release();
+            notifyCarLeft(vehicle);
+        }
     }
 
     public Semaphore getSemaphore() {

@@ -21,6 +21,7 @@ public class HomePageView {
     private JButton finishSimulationButton;
     private JButton forceFinishSimulationButton;
     private JTextField intervalField;
+    private ButtonGroup mecanismo;
     private File arquivo = null;
     private String msgErro;
 
@@ -41,6 +42,12 @@ public class HomePageView {
         });
         forceFinishSimulationButton.addActionListener(e -> {
             gridController.shutDownSimulation();
+        });
+        radioButtonMonitor.addActionListener(e -> {
+            settings.setSimulationMode(SimulationSettings.SIMULATION_MODE_MONITOR);
+        });
+        radioButtonSemaforo.addActionListener(e -> {
+            settings.setSimulationMode(SimulationSettings.SIMULATION_MODE_SEMAPHORE);
         });
         buttonSelecionarMalha.addActionListener(new ActionListener() {
             @Override
@@ -105,12 +112,6 @@ public class HomePageView {
             msgErro += "Por favor, selecione pelo menos uma opção (Semáforo ou Monitor).\n";
             return false;
         }
-        if (radioButtonSemaforo.isSelected()) {
-            settings.setSimulationMode(SimulationSettings.SIMULATION_MODE_SEMAPHORE);
-        } else {
-            settings.setSimulationMode(SimulationSettings.SIMULATION_MODE_MONITOR);
-        }
-
         // verifica se um arquivo foi selecionado
         if (arquivo == null) {
             msgErro += "Por favor, selecione um arquivo antes de iniciar.\n";
