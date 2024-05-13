@@ -139,6 +139,7 @@ public class GridController extends Thread implements GridCarObserver, CarObserv
             }
             for (RoadCell cell : grid.getCells()) {
                 if (cell.getVehicle() != null) {
+                    grid.notifyVehicleLeave(cell.getVehicle());
                     cell.releaseVehicle();
                 }
             }

@@ -46,5 +46,4 @@ public class CellLabel extends JLabel implements CellObserver {
             setLabelIcon(cell.getCellImagePath());
         }
     }
-
 }
